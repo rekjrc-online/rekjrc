@@ -1,0 +1,91 @@
+<!-- profile_update_attributes.html -->
+{% for key, formset in subformsets.items %}
+    <h3 class="mb-3">{{ key|capfirst }}</h3>
+    {{ formset.management_form }}
+    <table width="100%" id="{{ key }}-table" class="table-auto border-collapse w-full mb-4">
+        <thead>
+            <tr class="bg-gray-200">
+                {% for field in formset.empty_form.visible_fields %}
+                    {% if field.name != 'DELETE' %}
+                        <th class="border px-2 py-1 text-left">{{ field.label }}</th>
+                    {% endif %}
+                {% endfor %}
+                <th class="border px-2 py-1 text-center">Delete</th>
+            </tr>
+        </thead>
+        <tbody id="{{ key }}-tbody">
+            {% for form in formset.forms %}
+            <tr class="border-b {% cycle 'bg-gray-50' 'bg-white' %}">
+                {% for field in form.visible_fields %}
+                    {% if field.name != 'DELETE' %}
+                        <td class="px-2 py-1">
+                            {{ field }}
+                            {% if field.help_text %}
+                                <br><small class="text-gray-500">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="text-red-600">{{ error }}</div>
+                            {% endfor %}
+                        </td>
+                    {% endif %}
+                {% endfor %}
+                <td class="px-2 py-1 text-center" align="center">
+                    {% if form.DELETE %}
+                        {% if form.instance.pk %}
+                            {# Existing row #}
+                            <input type="button" style="width:100%; background-color: blue; color: white;" onclick="deleteRow(this)" value="delete">
+                            <input type="hidden" name="{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}">
+                        {% else %}
+                            {# New row #}
+                            <input type="button" style="width:100%; background-color: green; color: white;" onclick="deleteRow(this)" value="add">
+                        {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+<script>
+    function addForm(key) {
+        const tableBody = document.getElementById(key + '-tbody');
+        const totalForms = document.getElementById('id_' + key + '-TOTAL_FORMS');
+        const formIdx = parseInt(totalForms.value);
+
+        // Clone empty form template from Django formset
+        let emptyFormHtml = `{{ formset.empty_form.as_table|escapejs }}`;
+        emptyFormHtml = emptyFormHtml.replace(/__prefix__/g, formIdx);
+
+        // Convert to <tr> element
+        const temp = document.createElement('tbody');
+        temp.innerHTML = emptyFormHtml;
+        const newRow = temp.firstElementChild;
+
+        // Add alternating row color
+        const rowClass = (tableBody.children.length % 2 === 0) ? 'bg-gray-50' : 'bg-white';
+        newRow.classList.add(rowClass);
+
+        // Add delete handler
+        const deleteCheckbox = newRow.querySelector('input[type="checkbox"]');
+        if (deleteCheckbox) {
+            deleteCheckbox.setAttribute('onclick', 'deleteRow(this)');
+        }
+
+        tableBody.appendChild(newRow);
+        totalForms.value = formIdx + 1;
+    }
+
+    function deleteRow(checkbox) {
+        const row = checkbox.closest('tr');
+        if (row) {
+            // Mark the hidden DELETE input as checked for Django
+            const hiddenDelete = row.querySelector('input[type="hidden"][name$="DELETE"]');
+            if (hiddenDelete) {
+                hiddenDelete.value = 'on';
+            }
+            // Hide row immediately
+            row.style.display = 'none';
+        }
+    }
+</script>

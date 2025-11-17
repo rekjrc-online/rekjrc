@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <!-- profile_detail.html -->
-<div class="post card">
+<div class="panel">
     <center>
         <a href="/profiles/{{ profile.id }}/update">Update Profile</a><br />
         Profile Type: {{ profile.profiletype }}
@@ -26,7 +26,7 @@
     <table align="center">
         {% if profile.city or profile.state %}
             <tr>
-                <th align="left">Location</th>
+                <th align="left">Location:</th>
                 <td>{{ profile.city }} {{ profile.state }}</td>
             </tr>
         {% endif %}
@@ -39,22 +39,24 @@
     </table>
 
     {% if related_objs %}
-        {% if profile.profiletype == "MODEL" %}
-            <h1>Build Attributes</h1>
-        {% elif profile.profiletype == "DRIVER" %}
-            <h1>Driver Attributes</h1>
-        {% elif profile.profiletype == "LOCATION" %}
-            <h1>Location Attributes</h1>
-        {% elif profile.profiletype == "RACE" %}
-            <center>
+        <center>
+            {% if profile.profiletype == "MODEL" %}
+                <h1>Build Attributes</h1>
+            {% elif profile.profiletype == "DRIVER" %}
+                <h1>Driver Attributes</h1>
+            {% elif profile.profiletype == "LOCATION" %}
+                <h1>Location Attributes</h1>
+            {% elif profile.profiletype == "RACE" %}
                 <h1>Join Race Link</h1>
+                <a href="{% url 'races:race_join' profile.id %}">Join Race</a>
                 <a href="/media/qrcodes/race_{{ profile.id }}.png" target="_blank">
                     <img src="/media/qrcodes/race_{{ profile.id }}.png">
                 </a>
-            </center>
-        {% elif profile.profiletype == "TRACK" %}
-            <h1>Track Attributes</h1>
-        {% endif %}
+            {% elif profile.profiletype == "TRACK" %}
+                <h1>Track Attributes</h1>
+            {% endif %}
+        </center>
+
         {% for key, info in related_objs.items %}
             {% if info %}
                 {% if info.locations %}
@@ -91,7 +93,7 @@
     {% endif %}
 
     {% if posts_with_images %}
-        <div class="card">
+        <div class="panel">
             <h3>Photos</h3>
             <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:10px;">
                 {% for post in posts_with_images %}

@@ -16,7 +16,7 @@
     <a href="/humans/update/">Verify your account</a>
 {% elif user.profile_set.exists %}
     <form method="post" enctype="multipart/form-data">
-        <div class="post card">
+        <div class="panel">
             {% csrf_token %}
             {{ form.non_field_errors }}
             {{ form.profile }}
@@ -48,7 +48,7 @@
             </button>
 
         </div>
-        <div class="post card">
+        <div class="panel">
             <div>
                 {% if attribute_formset %}
                     {{ attribute_formset.management_form }}

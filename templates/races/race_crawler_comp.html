@@ -3,10 +3,10 @@
 {% load race_filters %}
 <!-- race_crawler_comp.html -->
 
+<div class="panel">
 <center>
 <h2>{{ race.profile.displayname }}</h2>
 </center>
-
 <table style="width:100%; text-align:center;" cellpadding="2" cellspacing="2">
     <tr>
         <th>Action</th>
@@ -51,5 +51,5 @@
         <tr><td colspan="5">No drivers signed up yet.</td></tr>
     {% endfor %}
 </table>
-
+</div>
 {% endblock %}

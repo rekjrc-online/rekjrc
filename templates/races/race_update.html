@@ -6,7 +6,7 @@
 <form method="post" novalidate>
     {% csrf_token %}
 
-    <div class="post card">
+    <div class="panel">
         {% include "races/race_form.html" %}
         <button type="submit"
            >
@@ -14,7 +14,7 @@
         </button>
     </div>
 
-    <div class="post card">
+    <div class="panel">
         {% if attribute_formset %}
             <center><h3>Race Attributes</h3></center>
             {{ attribute_formset.management_form }}

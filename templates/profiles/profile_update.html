@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <!-- profile_update.html -->
-<div class="card">
+<div class="panel">
 <form method="post" enctype="multipart/form-data" action="{% url 'profiles:update-profile' profile.id %}">
 
     {% csrf_token %}
@@ -13,50 +13,13 @@
     {{ profile_form.as_p }}
 
     {% if related_form %}
-        <center>
-            <h3>{{ related_type|capfirst }} Details</h3>
-        </center>
         {{ related_form.as_p }}
     {% endif %}
 
-    {% for key, formset in subformsets.items %}
-        <h2>{{ key|capfirst }}</h2>
-        {{ formset.management_form }}
-        <table border="0" style="border-collapse: collapse; width: 100%;">
-            {% for form in formset.forms %}
-                <tr>
-                    <td>
-                        {# Render hidden fields first (like id) #}
-                        {% for hidden in form.hidden_fields %}
-                            {{ hidden }}
-                        {% endfor %}
-                        {# Render all visible fields except DELETE #}
-                        {% for field in form.visible_fields %}
-                            {% if field.name != 'DELETE' %}
-                                <p>
-                                    {{ field.label_tag }} {{ field }}
-                                    {% if field.help_text %}
-                                        <small style="color: var(--font3)">{{ field.help_text }}</small>
-                                    {% endif %}
-                                    {% for error in field.errors %}
-                                        <div style="color: var(--accent-danger)">{{ error }}</div>
-                                    {% endfor %}
-                                </p>
-                            {% endif %}
-                        {% endfor %}
-                    </td>
-                    <td style="text-align: center; vertical-align: middle;">
-                        {# Render the DELETE checkbox only once, manually #}
-                        {% if form.DELETE %}
-                            <label>
-                                {{ form.DELETE }} Delete
-                            </label>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-    {% endfor %}
+    {% if profile.profiletype == "MODEL" %}
+        {% include "profiles/profile_update_attributes.html" %}
+    {% else %}
+    {% endif %}
 
     <center>
         <button type="submit" class="btn-wide">Save</button><p>

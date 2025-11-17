@@ -4,10 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const postId = this.dataset.postId;
             const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-            if (!csrfInput) {
-                return;
-            }
+            if (!csrfInput) return;
             const csrftoken = csrfInput.value;
+
             fetch(`/posts/${postId}/like-ajax/`, {
                 method: 'POST',
                 headers: {
@@ -15,9 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json',
                 },
             })
-            .then(response => {
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 const metricsDiv = document.querySelector(`.metrics[data-post-id="${postId}"]`);
                 if (!metricsDiv) {
@@ -30,10 +27,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     return;
                 }
                 likeCount.textContent = data.likes_count;
-                // update the heart icon
+
                 const heart = btn.querySelector('.heart');
                 if (heart) {
                     heart.textContent = data.liked ? '❤️' : '🤍';
+                    // Add pop animation class
+                    heart.classList.add('liked');
+                    heart.addEventListener('animationend', () => {
+                        heart.classList.remove('liked');
+                    }, { once: true });
                 } else {
                     btn.textContent = data.liked ? '❤️' : '🤍';
                 }

@@ -36,14 +36,14 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card">
+    <div class="panel">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>
 {% endif %}
 
 {% if unused_location_profiles %}
-    <div class="post card">
+    <div class="panel">
         <h3>Unfinished Model Builds</h3>
     </div>
     {% for location in unused_location_profiles %}

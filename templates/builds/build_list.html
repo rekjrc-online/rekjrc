@@ -2,14 +2,14 @@
 {% block content %}
 <!-- build_list.html -->
 
-<div class="page_header">
+<div class="panel" style="text-align: center;">
     My Builds
-    (<a href="/profiles/build/?profiletype=model">New</a>)
+    (<a href="/profiles/build/?profiletype=model"><span style="color: var(--text-link-hover);">New</span></a>)
 </div>
 
 {% if builds %}
     {% for build in builds %}
-        <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ build.profile.id }}/';">
+        <div class="post bgmouse" onclick="window.location.href='/profiles/{{ build.profile.id }}/';">
             <table cellpadding="5" cellspacing="0">
                 <tr>
                     <td align="center" valign="top">
@@ -19,7 +19,7 @@
                             </a>
                         {% else %}
                             <img src="/static/nophoto_{{ build.profile.profiletype }}.png" alt="Avatar" class="avatar">
-                        {% endif %}<br />
+                        {% endif %}
                         <a href="{% url 'profiles:update-profile' build.profile_id %}">Edit</a>
                     </td>
                     <td valign="top">
@@ -36,19 +36,19 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card">
+    <div class="panel">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a>
     </div>
 {% endif %}
 
 {% if unbuilt_models %}
-    <div class="post card">
-        <h3>Unfinished Model Builds</h3>
+    <div class="panel" style="text-align: center;">
+        Unfinished Model Builds
     </div>
 
     {% for profile in unbuilt_models %}
-        <div class="post card">
+        <div class="panel bgmouse">
             <table cellpadding="0" cellspacing="0">
                 <tr>
                     <td align="center" valign="top">
@@ -59,13 +59,12 @@
                         {% else %}
                             <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar">
                         {% endif %}
-                        <br />
                         <a href="{% url 'profiles:update-profile' profile.id %}">Edit</a> / 
                         <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br />
                         <a href="{% url 'builds:build_build' profile.id %}">Build</a>
                     </td>
                     <td valign="top">
-                        <h3>{{ profile.displayname }}</h3>
+                        <strong>{{ profile.displayname }}</strong>
                         {% if profile.bio %}
                             <p>{{ profile.bio|linebreaksbr }}</p>
                         {% endif %}

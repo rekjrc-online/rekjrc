@@ -2,14 +2,13 @@
 {% block content %}
 <!-- race_list.html -->
 
-<div class="page_header">
-    My Races
-    (<a href="/profiles/build/?profiletype=driver">New</a>)
+<div class="panel" style="text-align: center;">
+    My Races (<a href="/profiles/build/?profiletype=driver">New</a>)
 </div>
 
 {% if profiles %}
     {% for profile in profiles %}
-        <div class="post card">
+        <div class="panel">
             <table cellpadding="5" cellspacing="0">
                 <tr>
                     <td valign="top" align="center" nowrap>
@@ -44,7 +43,8 @@
                                 <u>Team:</u> {{ profile.race.team }}<br />
                             {% endif %}
                             <u>Entries:</u> {{ profile.driver_count }}<br />
-                            <div style="padding:10px;">
+                            <br />
+                            <font size="+2">
                                 {% if profile.race.race_type == "Lap Race" %}
                                     <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br />
                                     <a href="">Upload MyLaps</a><br />
@@ -55,7 +55,7 @@
                                 {% elif profile.race.race_type == "Crawler Comp" %}
                                     <a href="{% url 'races:race_crawler_comp' profile.id profile.race.id %}">Run Race</a>
                                 {% endif %}
-                            </div>
+                            </font>
                         {% endif %}
                     </td>
                 </tr>
@@ -63,7 +63,7 @@
         </div>
     {% endfor %}
 {% else %}
-    <div class="post card">
+    <div class="panel">
         None found<br /><br />
         <a href="/profiles/">Back to Profiles</a> /
         <a href="/profiles/build/">Create Profile</a>

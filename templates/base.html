@@ -1,39 +1,469 @@
-<!-- base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RekjRC Online</title>
-    <link rel="icon" href="/static/favicon.ico">
-    <link rel="stylesheet" href="/static/colors-dark.css" />
-    <link rel="stylesheet" href="/static/styles.css" />
-    <link rel="stylesheet" href="/static/blocks.css" />
-    <link rel="stylesheet" href="/static/nav.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online</title>
+<link rel="icon" href="/static/favicon.ico">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+:root {
+    /* Backgrounds */
+    --bg-body: #121212;
+    --bg-post: #1b1b1b;
+    --bg-post-hover: #262626;
+
+    /* Text */
+    --text-body: #e0e0e0;
+    --text-muted: #aaa;
+    --text-link-hover: #6fb8ff;          /* unified lighter blue */
+    --text-link: #white;
+
+    /* Borders */
+    --border-post: #27415a;        /* use same lighter blue */
+    --border-post-hover: #6fb8ff;
+
+    /* Post content rounding */
+    --border-radius-inner: 8px;
+
+    /* Avatar menu */
+    --avatar-menu-radius: 5px;
+}
+
+/* Body */
+body {
+    background-color: var(--bg-body);
+    color: var(--text-body);
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-link-hover);
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
+}
+
+a:hover {
+    color: var(--text-link-hover);
+    text-decoration: underline;
+}
+
+.post a:hover {
+    color: var(--text-link-hover);
+    text-decoration: underline;
+}
+
+/* Layout Grid */
+.layout-container {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 500px) 1fr;
+    justify-content: center;
+    column-gap: 0.5rem;
+    min-height: 100vh;
+}
+
+.left-col, .right-col {
+    position: sticky;
+    top: 1rem; /* offset from the top of viewport */
+    align-self: start; /* ensures proper alignment in the grid */
+    height: fit-content; /* shrink to content height */
+}
+
+/* Left Column */
+.left-col {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 1rem;
+}
+.left-inner {
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+/* Middle Column */
+.middle-col {
+    padding: 0px 1rem;
+    width: 100%;
+    max-width: 500px;
+}
+
+/* Right Column */
+.right-col {
+    display: flex;
+    justify-content: flex-start;
+    padding-top: 1rem;
+}
+.right-inner {
+    width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Menu avatars */
+.menu-avatar {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    border-radius: var(--avatar-menu-radius);
+    vertical-align: middle;
+}
+
+/* Post avatars */
+.post .avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Post avatars */
+.panel .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    display: block;
+}
+
+/* Panel left links */
+.panel-left a, .panel-left button {
+    text-decoration: none;
+    color: var(--text-link);
+}
+.panel-left a:hover, .panel-left button:hover {
+    color: var(--text-link-hover);
+    text-decoration: underline;
+}
+.panel {
+    border:solid 1px var(--border-post);
+    padding: 1rem;
+}
+/* Sidebar cards */
+.card img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .left-col, .right-col { display: none; }
+}
+
+/* Post Metrics */
+.metrics {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+.metrics a {
+    color: var(--text-link);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.metrics a:hover { text-decoration: underline; }
+.metrics .heart { font-size: 1rem; }
+.metrics .like-count { font-size: 0.875rem; }
+.metrics span { vertical-align: middle; }
+
+/* Heart animation */
+.heart {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+.heart.liked {
+    animation: pop 0.3s forwards;
+}
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100% { transform: scale(1); }
+}
+
+.top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 999;  /* make sure it sits above posts */
+    background-color: var(--bg-body); /* avoid scroll-through bleed */
+    border-left: 1px solid var(--border-post);
+    border-right: 1px solid var(--border-post);
+}
+nav {
+    border-left: 1px solid var(--border-post);
+    border-right: 1px solid var(--border-post);
+    border-bottom: 1px solid var(--border-post);
+    padding: 12px 16px;
+    text-align: center;
+    position: sticky;
+}
+
+/* Post card styling */
+.post {
+    border-top: 0px solid var(--border-post);
+    border-right: 1px solid var(--border-post);
+    border-bottom: 1px solid var(--border-post);
+    border-left: 1px solid var(--border-post);
+    padding: 12px 16px;
+    margin: 0px;
+    cursor: pointer;
+    transition: background-color 0.1s ease, border-color 0.1s ease;
+    color: var(--text-body);
+}
+.post:hover {
+    background-color: var(--bg-post-hover);
+}
+
+/* Header (name + profile type + timestamp) */
+.post strong a {
+    color: var(--text-link);
+    text-decoration: none;
+}
+.post strong a:hover {
+    text-decoration: underline;
+}
+
+/* Post layout */
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+/* Post text */
+.post p {
+    line-height: 1.5rem;
+    margin: 6px 0;
+}
+
+/* Images or embedded content inside posts */
+.post img, .post iframe, .post .embed-card {
+    border-radius: var(--border-radius-inner);
+    max-width: 100%;
+    margin-top: 6px;
+    display: block;
+}
+
+.feed {
+    margin-top: 0 !important;
+}
+
+/* Form wrapper spacing */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Labels */
+form label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+/* Inputs, Selects, Textareas */
+form input[type="text"],
+form input[type="email"],
+form input[type="url"],
+form input[type="file"],
+form input[type="password"],
+form select,
+form textarea {
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    font-size: 1rem;
+
+    background: #E0E0E0;
+    color: black;
+
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+
+    box-sizing: border-box;
+    transition: 0.2s border-color ease, 0.2s box-shadow ease;
+}
+
+/* Focus */
+form input:focus,
+form select:focus,
+form textarea:focus {
+    outline: none;
+    border-color: var(--text-link-hover);
+    box-shadow: 0 0 0 2px rgba(100, 150, 255, 0.25);
+}
+
+/* Textarea */
+form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+/* Submit button */
+form button[type="submit"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 10px;
+
+    background: var(--text-link-hover);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: 0.2s background ease;
+}
+
+form button[type="submit"]:hover {
+    background: var(--text-link);
+}
+
+/* --- OPTIONAL: TABULAR / TWO-COLUMN FORMS (desktop only) --- */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr; /* collapse to full width */
+    }
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        {% if not is_mobile %}
-            <div class="left-col">
-                {% include "panel_left.html" %}
+<div class="layout-container">
+    <!-- Left sidebar -->
+    <div class="left-col">
+        <div class="left-inner panel-left">
+            {% if request.user.is_authenticated %}
+            <!-- Top Links -->
+            <div class="d-flex flex-column gap-2 mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 20px; display: inline-block;">&#x1F3E0;</span>
+                    <a href="{% url 'homepage' %}">Home</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 20px; display: inline-block;">&#x1F464;</span>
+                    <a href="/humans/update/">Account</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 20px; display: inline-block;">&#x2753;</span>
+                    <a href="/support/">Support</a>
+                </div>
+                {% if request.user.is_staff %}
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 20px; display: inline-block;">&#x2699;</span>
+                    <a href="/admin/">Admin</a>
+                </div>
+                {% endif %}
+                <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:none;">
+                    {% csrf_token %}
+                </form>
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 20px; display: inline-block;">&#x1F512;</span>
+                    <a href="#" onclick="document.getElementById('logoutform').submit(); return false;">Logout</a>
+                </div>
             </div>
-        {% endif %}
+            {% if user.is_verified %}
+            <!-- My Database -->
+            <h6 class="text-uppercase fw-bold mb-2">My Database</h6>
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/static/nophoto_MODEL.png" class="menu-avatar">
+                    <a href="/builds/">Builds</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/static/nophoto_DRIVER.png" class="menu-avatar">
+                    <a href="/drivers/">Drivers</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/static/nophoto_TRACK.png" class="menu-avatar">
+                    <a href="/tracks/">Tracks</a>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <img src="/static/nophoto_RACE.png" class="menu-avatar">
+                    <a href="/races/">Races</a>
+                </div>
+            </div>
 
-        <div class="middle-col">
-            {% if is_mobile %}
-                {% include "base_nav_mobile.html" %}
-            {% else %}
-                {% include "base_nav.html" %}
+            <!-- Coming Soon -->
+            <h6 class="text-uppercase fw-bold mt-3 mb-2">Coming Soon</h6>
+            <div class="d-flex flex-column gap-2">
+                <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_LOCATION.png" class="menu-avatar"> <span>Locations</span></div>
+                <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_CLUB.png" class="menu-avatar"> <span>Clubs</span></div>
+                <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_EVENT.png" class="menu-avatar"> <span>Events</span></div>
+                <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_STORE.png" class="menu-avatar"> <span>Stores</span></div>
+                <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_TEAM.png" class="menu-avatar"> <span>Teams</span></div>
+            </div>
             {% endif %}
-
-            {% block content %}{% endblock %}
+            <div class="d-grid mt-3"><a href="/posts/create/" class="btn btn-primary btn-sm">New Post</a></div>
+            {% endif %}
         </div>
-
-        {% if not is_mobile %}
-            <div class="right-col sponsors">
-                {% include "panel_right.html" %}
-            </div>
-        {% endif %}
     </div>
+
+    <!-- Middle feed -->
+    <div class="middle-col">
+        <div class="panel">
+            <center><h1>RekjRC Online</h1></center>
+        </div>
+        <nav class="top-nav mb-3 text-center">
+            | <a href="{% url 'homepage' %}">Home</a> |
+            {% if request.user.is_authenticated %}
+                <a href="/humans/update">Account</a> |
+                {% if user.is_verified %}
+                    <a href="/builds/">Builds</a> |
+                    <a href="/drivers/">Drivers</a> |
+                    <a href="/tracks/">Tracks</a> |
+                    <a href="/races/">Races</a> |
+                {% endif %}
+                <a href="{% url 'logout' %}">Logout</a> |
+            {% else %}
+                <a href="/humans/login/">Login</a>
+            {% endif %}
+        </nav>
+        {% block content %}{% endblock %}
+        <br /><br /><br />
+    </div>
+
+    <!-- Right sidebar -->
+    <div class="right-col">
+        <div class="right-inner">
+            <h6 class="text-center fw-bold mb-3">Visit Our Friends</h6>
+            {% if sponsors_list %}
+            <div class="d-flex flex-column gap-3">
+                {% for sponsor in sponsors_list %}
+                    <div class="card">
+                        <a href="{{ sponsor.website }}" target="_blank" onclick="recordSponsorClick('{{ sponsor.id }}', '{{ sponsor.website }}'); return false;">
+                            <img src="{{ sponsor.image.url }}" class="card-img-top img-fluid rounded" alt="{{ sponsor.name }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <div class="text-center text-muted">No sponsors yet</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

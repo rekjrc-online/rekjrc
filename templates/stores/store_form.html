@@ -4,7 +4,7 @@
 
 <div class="page_header">{% if form.instance.pk %}Edit Store{% else %}Create Store{% endif %}</div>
 
-<div class="post card">
+<div class="panel">
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}

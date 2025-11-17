@@ -3,7 +3,7 @@
 <!-- profile_build.html -->
 <div class="page_header">Create New Profile</div>
 
-<div class="post card">
+<div class="panel">
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_p }}
