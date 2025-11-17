@@ -8,7 +8,7 @@
 
 {% if profiles %}
     {% for profile in profiles %}
-        <div class="panel">
+        <div class="post bgmouse" onclick="window.location.href='/profiles/{{ profile.id }}/';">
             <table cellpadding="5" cellspacing="0">
                 <tr>
                     <td valign="top" align="center" nowrap>
@@ -20,8 +20,7 @@
                             <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
                         {% endif %}
                         <p>
-                            <a href="{% url 'profiles:detail-profile' profile.id %}">View</a><br />
-                            <a href="{% url 'profiles:update-profile' profile.id %}">Update</a>
+                            <a href="{% url 'profiles:update-profile' profile.id %}">Edit</a>
                         </p>
                     </td>
                     <td valign="top">
@@ -44,22 +43,24 @@
                             {% endif %}
                             <u>Entries:</u> {{ profile.driver_count }}<br />
                             <br />
-                            <font size="+2">
-                                {% if profile.race.race_type == "Lap Race" %}
-                                    <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br />
-                                    <a href="">Upload MyLaps</a><br />
-                                {% elif profile.race.race_type == "Drag Race" %}
-                                    <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
-                                {% elif profile.race.race_type == "Out and Back" %}
-                                    <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Race</a>
-                                {% elif profile.race.race_type == "Crawler Comp" %}
-                                    <a href="{% url 'races:race_crawler_comp' profile.id profile.race.id %}">Run Race</a>
-                                {% endif %}
-                            </font>
                         {% endif %}
                     </td>
                 </tr>
             </table>
+            <center>
+                <font size="+2">
+                    {% if profile.race.race_type == "Lap Race" %}
+                        <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload LapMonitor</a><br />
+                        <a href="{% url 'races:lapmonitor_upload' profile.race.id %}">Upload MyLaps</a>
+                    {% elif profile.race.race_type == "Drag Race" %}
+                        <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Drag Race</a>
+                    {% elif profile.race.race_type == "Out and Back" %}
+                        <a href="{% url 'races:race_drag_race' profile.id profile.race.id %}">Run Out-and-Back Race</a>
+                    {% elif profile.race.race_type == "Crawler Comp" %}
+                        <a href="{% url 'races:race_crawler_comp' profile.id profile.race.id %}">Run Crawler Competition</a>
+                    {% endif %}
+                </font>
+            </center>
         </div>
     {% endfor %}
 {% else %}

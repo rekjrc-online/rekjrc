@@ -2,15 +2,14 @@
 {% block content %}
 <!-- track_list.html -->
 
-<div class="page_header">
-    My Tracks
-    (<a href="/profiles/build/?profiletype=track">New</a>)
+<div class="panel" style="text-align: center;">
+    <font size="+1">My Tracks (<a href="/profiles/build/?profiletype=track">New</a>)</font>
 </div>
 
 {% if tracks %}
     {% for track in tracks %}
-        <div class="panel">
-            <table>
+        <div class="post bgmouse" onclick="window.location.href='/profiles/{{ track.profile.id }}/';">
+            <table cellpadding="5" cellspacing="0">
                 <tr>
                     <td valign="top" align="center" nowrap>
                         {% if track.profile.avatar %}
@@ -20,12 +19,8 @@
                         {% else %}
                             <img src="/static/nophoto_{{ track.profile.profiletype }}.png" alt="Avatar" class="avatar">
                         {% endif %}
-
-                        <p>{{ track.profile.get_profiletype_display }}</p>
                         <p>
-                            <a href="{% url 'profiles:update-profile' track.profile.id %}">Edit</a> /
-                            <a href="{% url 'profiles:detail-profile' track.profile.id %}">View</a><br />
-                            <a href="{% url 'tracks:track_delete' track.profile.id %}">Delete</a>
+                            <a href="{% url 'profiles:update-profile' track.profile.id %}">Edit</a>
                         </p>
                     </td>
                     <td></td>
