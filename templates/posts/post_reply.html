@@ -5,12 +5,13 @@
     <h3>Reply to Post</h3>
 
     <!-- Original Post Preview -->
-    <div>
-        <strong>@{{ parent_post.profile.displayname }}</strong>
+    <div class="reply">
+        <u><strong>{{ parent_post.profile.displayname }}</strong>
         - <font size="-1">{{ parent_post.profile.get_profiletype_display }}
-        - {{ parent_post.insertdate|date:"m/d/y h:iA" }}</font><br />
-        <small class="text-muted">{{ parent_post.insertdate|date:"M d, Y H:i" }}</small>
-        <p>{{ parent_post.content }}</p>
+        - {{ parent_post.insertdate|date:"m/d/y h:iA" }}</font></u><br />
+        <div style="padding-left:10px;">
+            {{ parent_post.content }}
+        </div>
         {% if parent_post.image %}
             <img src="{{ parent_post.image.url }}" alt="Post image" style="max-width: 100%; height: auto;">
         {% endif %}
