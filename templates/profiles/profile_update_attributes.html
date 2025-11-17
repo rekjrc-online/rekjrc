@@ -15,7 +15,7 @@
         </thead>
         <tbody id="{{ key }}-tbody">
             {% for form in formset.forms %}
-            <tr class="border-b {% cycle 'bg-gray-50' 'bg-white' %}">
+            <tr class="border-b bg-gray-50">
                 {% for field in form.visible_fields %}
                     {% if field.name != 'DELETE' %}
                         <td class="px-2 py-1">
