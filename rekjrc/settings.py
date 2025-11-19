@@ -153,6 +153,33 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ------------------------------
+# Logging
+# ------------------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # Silence the development server request logs (404, etc)
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # Silence Django request logs (404s)
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
+
+# ------------------------------
 # Internationalization
 # ------------------------------
 LANGUAGE_CODE = "en-us"

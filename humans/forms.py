@@ -11,6 +11,13 @@ class HumanRegistrationForm(UserCreationForm):
     class Meta:
         model = Human
         fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={'placeholder': 'Username'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'First name'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Last name'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': 'Optional'}),
+        }
 
 class HumanForm(forms.ModelForm):
     class Meta:
@@ -21,4 +28,5 @@ class HumanForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'placeholder': 'First name'}),
             'last_name': forms.TextInput(attrs={'placeholder': 'Last name'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Email'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': 'Optional'}),
         }

@@ -21,6 +21,7 @@ urlpatterns = [
     path('humans/', include('humans.urls')),
     path('locations/', include('locations.urls')),
     path('posts/', include('posts.urls')),
+    path('privacy/', include('privacy.urls')),
     path('profiles/', include('profiles.urls')),
     path('races/', include('races.urls')),
     path('sponsors/', include('sponsors.urls')),

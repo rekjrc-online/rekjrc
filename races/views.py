@@ -94,8 +94,8 @@ class RaceDragRaceView(LoginRequiredMixin, View):
 
         drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
 
-        # --- ROUND 1: initialize bracket ---
         if not drag_rounds.exists():
+            # --- ROUND 1: initialize bracket ---
             drivers = list(RaceDriver.objects.filter(race=race))
             random.shuffle(drivers)
             num_entrants = len(drivers)

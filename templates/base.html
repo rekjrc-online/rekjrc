@@ -298,6 +298,7 @@ form label {
 }
 
 /* Inputs, Selects, Textareas */
+form input[type="tel"],
 form input[type="text"],
 form input[type="email"],
 form input[type="url"],
@@ -374,55 +375,79 @@ form button[type="submit"]:hover {
     <!-- Left sidebar -->
     <div class="left-col">
         <div class="left-inner panel-left">
-            {% if request.user.is_authenticated %}
             <!-- Top Links -->
             <div class="d-flex flex-column gap-2 mb-3">
                 <div class="d-flex align-items-center gap-2">
                     <span style="width: 20px; display: inline-block;">&#x1F3E0;</span>
                     <a href="{% url 'homepage' %}">Home</a>
                 </div>
-                <div class="d-flex align-items-center gap-2">
-                    <span style="width: 20px; display: inline-block;">&#x1F464;</span>
-                    <a href="/humans/update/">Account</a>
-                </div>
+                {% if request.user.is_authenticated %}
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="width: 20px; display: inline-block;">&#x1F464;</span>
+                        <a href="/humans/update/">Account</a>
+                    </div>
+                {% endif %}
                 <div class="d-flex align-items-center gap-2">
                     <span style="width: 20px; display: inline-block;">&#x2753;</span>
                     <a href="/support/">Support</a>
                 </div>
-                {% if request.user.is_staff %}
-                <div class="d-flex align-items-center gap-2">
-                    <span style="width: 20px; display: inline-block;">&#x2699;</span>
-                    <a href="/admin/">Admin</a>
-                </div>
+                {% if request.user.is_authenticated %}
+                    {% if request.user.is_staff %}
+                        <div class="d-flex align-items-center gap-2">
+                            <span style="width: 20px; display: inline-block;">&#x2699;</span>
+                            <a href="/admin/">Admin</a>
+                        </div>
+                    {% endif %}
+                    <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:none;">
+                        {% csrf_token %}
+                    </form>
+                    <div class="d-flex align-items-center gap-2">
+                        <span style="width: 20px; display: inline-block;">&#x1F512;</span>
+                        <a href="#" onclick="document.getElementById('logoutform').submit(); return false;">Logout</a>
+                    </div>
+                    <div style="width:120px; text-align:center; padding:5px 10px; border:1px solid white; border-radius: 5px; background-color:var(--text-link-hover);">
+                        <a href="/posts/create/" style="color:white;"><b>New&nbsp;Post</b></a>
+                    </div>
                 {% endif %}
-                <form id="logoutform" method="post" action="{% url 'logout' %}" style="display:none;">
-                    {% csrf_token %}
-                </form>
-                <div class="d-flex align-items-center gap-2">
-                    <span style="width: 20px; display: inline-block;">&#x1F512;</span>
-                    <a href="#" onclick="document.getElementById('logoutform').submit(); return false;">Logout</a>
-                </div>
             </div>
-            {% if user.is_verified %}
             <!-- My Database -->
-            <h6 class="text-uppercase fw-bold mb-2">My Database</h6>
+            <h6 class="text-uppercase fw-bold mb-2;">My Database</h6>
             <div class="d-flex flex-column gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/static/nophoto_MODEL.png" class="menu-avatar">
-                    <a href="/builds/">Builds</a>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/static/nophoto_DRIVER.png" class="menu-avatar">
-                    <a href="/drivers/">Drivers</a>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/static/nophoto_TRACK.png" class="menu-avatar">
-                    <a href="/tracks/">Tracks</a>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    <img src="/static/nophoto_RACE.png" class="menu-avatar">
-                    <a href="/races/">Races</a>
-                </div>
+                {% if user.is_verified %}
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_MODEL.png" class="menu-avatar">
+                        <a href="/builds/">Builds</a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_DRIVER.png" class="menu-avatar">
+                        <a href="/drivers/">Drivers</a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_TRACK.png" class="menu-avatar">
+                        <a href="/tracks/">Tracks</a>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_RACE.png" class="menu-avatar">
+                        <a href="/races/">Races</a>
+                    </div>
+                {% else %}
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_MODEL.png" class="menu-avatar">
+                        Builds
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_DRIVER.png" class="menu-avatar">
+                        Drivers
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_TRACK.png" class="menu-avatar">
+                        Tracks
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="/static/nophoto_RACE.png" class="menu-avatar">
+                        Races
+                    </div>
+                {% endif %}
             </div>
 
             <!-- Coming Soon -->
@@ -434,8 +459,7 @@ form button[type="submit"]:hover {
                 <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_STORE.png" class="menu-avatar"> <span>Stores</span></div>
                 <div class="d-flex align-items-center gap-2"><img src="/static/nophoto_TEAM.png" class="menu-avatar"> <span>Teams</span></div>
             </div>
-            {% endif %}
-            <div class="d-grid mt-3"><a href="/posts/create/" class="btn btn-primary btn-sm">New Post</a></div>
+            {% if user.is_verified %}
             {% endif %}
         </div>
     </div>

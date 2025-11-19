@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 <!-- update.html -->
-<div class="page_header">My Account</div>
+<div class="panel" style="text-align: center;"><h3>My Account</h3></div>
 
 <div class="panel">
     <br />
     <form method="post">
         {% csrf_token %}
-        <table align="center" cellpadding="0" cellspacing="0">
+        <table align="center" cellpadding="5" cellspacing="0">
             <tr>
                 <td>{{ form.username.label_tag }}</td>
                 <td>{{ form.username }}</td>
@@ -25,12 +25,8 @@
                 <td>{{ form.email }}</td>
             </tr>
             <tr>
-                <td>{{ form.phone_number.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>{{ form.phone_number.label_tag }}</td>
                 <td>{{ form.phone_number }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.is_verified.label_tag }}&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>{{ form.is_verified }}</td>
             </tr>
             <tr>
                 <td colspan="2">

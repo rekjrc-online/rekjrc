@@ -7,8 +7,10 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Login</button>
-        &nbsp;&nbsp;
-        <input type="button" value="New User Sign Up" onclick="self.location.href='{% url 'register' %}'">
+    </form>
+    <br />
+    <form method="get" action="{% url 'register' %}">
+        <button type="submit">New User</button>
     </form>
 </div>
 {% endblock %}
