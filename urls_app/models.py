@@ -4,7 +4,6 @@ from django.conf import settings
 # Assuming Profile is your existing model
 from profiles.models import Profile
 
-
 class ShortURL(models.Model):
     code = models.CharField(max_length=20, unique=True)
     destination_url = models.URLField()
@@ -30,7 +29,6 @@ class ShortURL(models.Model):
 
     def __str__(self):
         return f"{self.code} → {self.destination_url}"
-
 
 class ClickEvent(models.Model):
     short_url = models.ForeignKey(

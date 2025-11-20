@@ -21,7 +21,7 @@
                     <span>{{ post.posted_date_delta }}</span>
                 </a>
             </div>
-            <p class="mb-1">{{ post.content|linebreaksbr }}</p>
+            <p class="mb-1">{{ post.display_content|safe|linebreaksbr }}</p>
             {% if post.image %}
                 <a target="_blank" href="{{ post.image.url }}">
                     <img src="{{ post.image.url }}" alt="Post image">

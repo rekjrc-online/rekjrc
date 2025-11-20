@@ -6,25 +6,45 @@ from rekjrc.base_models import BaseModel
 from profiles.models import Profile
 from humans.models import Human
 from PIL import Image
+import re
+
+HTML_TAG_REGEX = re.compile(r'<[^>]+>')
+def strip_html(text): return HTML_TAG_REGEX.sub('', text)
+
+URL_REGEX = re.compile(r'(https?://[^\s]+)', re.IGNORECASE)
+def make_clickable_urls(text):
+    def repl(match):
+        url = match.group(0)
+        return f'<a href="{url}" target="_blank" onclick="event.stopPropagation();" rel="noopener noreferrer">{url}</a>'
+    return URL_REGEX.sub(repl, text)
 
 class Post(BaseModel):
-    human = models.ForeignKey (
+    human = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name='posts',
-        db_index=True )
-    profile = models.ForeignKey (
+        db_index=True
+    )
+    profile = models.ForeignKey(
         Profile,
         on_delete=models.PROTECT,
         related_name='posts',
-        db_index=True )
-    parent = models.ForeignKey (
+        db_index=True
+    )
+    parent = models.ForeignKey(
         'self',
         on_delete=models.PROTECT,
         null=True,
         blank=True,
-        related_name='replies' )
+        related_name='replies'
+    )
+
+    # Raw user text (200 characters max)
     content = models.TextField(max_length=200)
+
+    # Processed HTML version with clickable links
+    display_content = models.TextField(max_length=1000, blank=True, null=True)
+
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     video_url = models.URLField(blank=True, null=True)
     likes_count = models.PositiveIntegerField(default=0)
@@ -40,14 +60,8 @@ class Post(BaseModel):
 
     @property
     def posted_date_delta(self):
-        """
-        Returns a human-readable string representing the time difference
-        between the post's insert date and now, using the largest sensible unit.
-        Examples: '12m', '3h', '5d', '3w', '6mo', '2y'
-        """
         now = timezone.now()
         delta = now - self.insertdate
-
         seconds = delta.total_seconds()
         minutes = seconds // 60
         hours = seconds // 3600
@@ -72,7 +86,16 @@ class Post(BaseModel):
             return f"{int(years)}y"
 
     def save(self, *args, **kwargs):
+        # Step 1 — strip all HTML from user input
+        if self.content:
+            self.content = strip_html(self.content)
+
+        # Step 2 — generate clickable-link version safely
+        self.display_content = make_clickable_urls(self.content or "")
+
         super().save(*args, **kwargs)
+
+        # Step 3 — image optimization (unchanged)
         if self.image:
             img_path = self.image.path
             img = Image.open(img_path)
@@ -83,8 +106,6 @@ class Post(BaseModel):
     def youtube_id(self):
         """
         Extracts the YouTube video ID if this post's video_url is a YouTube link.
-        Supports normal, short, and shorts URLs.
-        Returns None if not a YouTube URL.
         """
         if not self.video_url:
             return None
@@ -102,8 +123,10 @@ class Post(BaseModel):
 
         return None
 
+
 class PostLike(BaseModel):
     human = models.ForeignKey(Human, on_delete=models.PROTECT)
     post = models.ForeignKey(Post, on_delete=models.PROTECT, related_name='likes')
+
     class Meta:
         unique_together = ('human', 'post')

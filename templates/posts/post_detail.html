@@ -15,7 +15,7 @@
     </div>
 
     <!-- Post Content -->
-    <p>{{ post.content }}</p>
+    <p>{{ post.display_content|safe|linebreaksbr }}</p>
 
     {% if post.image %}
         <a target="_blank" href="{{ post.image.url }}">
