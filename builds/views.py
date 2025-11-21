@@ -77,6 +77,5 @@ class BuildDeleteView(LoginRequiredMixin, DeleteView):
         return Build.objects.filter(human=self.request.user)
 
     def get_success_url(self):
-        # after delete, redirect to the related profile
-        profile_id = self.object.profile.id
-        return reverse_lazy('profiles:detail-profile', kwargs={'profile_id': profile_id})
+        return reverse_lazy('profiles:detail-profile',
+                            kwargs={'profile_id': self.object.profile.id})
