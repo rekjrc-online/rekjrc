@@ -53,7 +53,7 @@
                         <a href="{% url 'races:lapmonitor_upload' profile.race.uuid %}">Upload LapMonitor</a><br />
                         <a href="{% url 'races:lapmonitor_upload' profile.race.uuid %}">Upload MyLaps</a>
                     {% elif profile.race.race_type == "Drag Race" %}
-                        <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}" onclick="event.stopPropagation(); return confirm('This will lock the race against further entries\r\n\r\nAre you sure?')">Run Drag Race</a>
+                        <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}">Run Drag Race</a>
                     {% elif profile.race.race_type == "Out and Back" %}
                         <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}">Run Out-and-Back Race</a>
                     {% elif profile.race.race_type == "Crawler Comp" %}
