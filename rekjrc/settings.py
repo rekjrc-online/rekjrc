@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
 # ------------------------------
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-STRIPE_WEBHOOK_SECRET = "whsec_your_webhook_secret"
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
 # ------------------------------
 # Installed Apps
