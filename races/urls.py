@@ -12,4 +12,5 @@ urlpatterns = [
     path("drag-race/<uuid:profile_uuid>/<uuid:race_uuid>/", views.RaceDragRaceView.as_view(), name="race_drag_race"),
     path("crawler-comp/<uuid:profile_uuid>/<uuid:race_uuid>/", views.RaceCrawlerCompView.as_view(), name="race_crawler_comp"),
     path("crawler-comp/run/<uuid:profile_uuid>/<uuid:race_uuid>/<uuid:racedriver_uuid>/", views.RaceCrawlerRunView.as_view(), name="race_crawler_run"),
+    path("crawler-comp/finish/<uuid:profile_uuid>/<uuid:race_uuid>/", views.RaceCrawlerFinishView.as_view(), name="race_crawler_finish"),
 ]

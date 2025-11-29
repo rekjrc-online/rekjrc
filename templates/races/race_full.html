@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel" style="text-align: center;">
+    <center>
+        <h4>{{ profile.displayname }}</h4>
+        Sorry, this race is closed to new entries.
+        <br />
+        <a href="{% url 'profiles:detail-profile' profile.uuid %}">Back to Race</a>
+    </center>
+</div>
+{% endblock %}

@@ -6,7 +6,7 @@
 
 {% if stores %}
   {% for store in stores %}
-    <div class="panel">
+    <div class="panel" onclick="window.location.href='/profiles/{{ store.uuid }}/';"></div>
       <table cellpadding="5" cellspacing="0">
         <tr>
           <td valign="top" align="center" nowrap>

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Count, Max
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views import View
@@ -20,7 +21,6 @@ import qrcode
 
 class RaceCrawlerCompView(View):
     template_name = 'races/race_crawler_comp.html'
-
     def get(self, request, profile_uuid, race_uuid):
         race = get_object_or_404(Race, uuid=race_uuid)
         racedrivers = RaceDriver.objects.filter(race=race).order_by('id')
@@ -31,9 +31,79 @@ class RaceCrawlerCompView(View):
             'racedrivers': racedrivers,
         })
 
+
+class RaceCrawlerFinishView(LoginRequiredMixin, View):
+
+    def post(self, request, profile_uuid, race_uuid, *args, **kwargs):
+
+        # 1️⃣ Get profile and race
+        profile = get_object_or_404(Profile, uuid=profile_uuid)
+
+        # 2️⃣ Permission check
+        if profile.human != request.user:
+            return HttpResponseForbidden("You are not allowed to finish this race.")
+
+        race = get_object_or_404(Race, profile=profile.id, uuid=race_uuid)
+        if not race:
+            return HttpResponseForbidden("Race does not exist.")
+        if race.race_finished==True:
+            return HttpResponseForbidden("Race is already finished.")
+
+        # 3️⃣ Pull crawler runs for those drivers
+        runs = RaceCrawlerRun.objects.filter(
+            race=race
+        ).select_related('racedriver', 'racedriver__driver', 'racedriver__model')
+
+        if not runs.exists():
+            return HttpResponseForbidden("No runs found.")
+
+        # 4️⃣ Mark race as finished
+        race.race_finished = True
+        race.entry_locked = True
+        race.save()
+
+        # 5️⃣ Format results by penalty_points (lowest points = winner)
+        sorted_runs = runs.order_by('penalty_points', 'elapsed_time')  # elapsed_time secondary
+
+        # Determine winner(s)
+        lowest_points = sorted_runs.first().penalty_points
+        winners = [run for run in sorted_runs if run.penalty_points == lowest_points]
+
+        # Format winner content
+        if len(winners) == 1:
+            winner = winners[0]
+            content = f"🏁 Winner 🏁\r\nDriver: {winner.racedriver.driver.displayname}\r\nModel: {winner.racedriver.model.displayname}\r\n"
+        else:
+            content = "🏁 Winners (tie) 🏁\r\n"
+            for run in winners:
+                content += f"Driver: {run.racedriver.driver.displayname} | Model: {run.racedriver.model.displayname}\r\n"
+
+        # Start building result lines with winner info
+        result_lines = [content]
+
+        # Append full leaderboard
+        for idx, run in enumerate(sorted_runs, start=1):
+            driver_name = run.racedriver.driver.displayname if run.racedriver.driver else '-driver-'
+            model_name = run.racedriver.model.displayname if run.racedriver.model else '-model-'
+            elapsed = f"{run.elapsed_time:.2f}s" if run.elapsed_time is not None else "No time"
+            points = run.penalty_points
+            result_lines.append(f"{idx}. {driver_name} | {model_name} | {points} pts | {elapsed}")
+
+        results_text = "\r\n".join(result_lines) or "No runs recorded."
+
+        # 6️⃣ Create a Post from the race's profile
+        Post.objects.create(
+            human=request.user,
+            profile=profile,
+            content=results_text
+        )
+
+        # 7️⃣ Redirect back to profile page (or wherever you want)
+        return redirect(reverse("profiles:detail-profile", kwargs={"profile_uuid": profile.uuid}))
+
+
 class RaceCrawlerRunView(View):
     template_name = 'races/race_crawler_run.html'
-
     def get(self, request, profile_uuid, race_uuid, racedriver_uuid):
         race = get_object_or_404(Race, uuid=race_uuid)
         racedriver = get_object_or_404(RaceDriver, uuid=racedriver_uuid)
@@ -394,6 +464,8 @@ class RaceJoinView(LoginRequiredMixin, View):
     def get(self, request, profile_uuid):
         profile = get_object_or_404(Profile, uuid=profile_uuid)
         race = get_object_or_404(Race, profile_id=profile.id)
+        if race.entry_locked==True:
+            return render(request, "races/race_full.html", {'profile': profile})
         driver_profiles = Profile.objects.filter(human=request.user, profiletype="DRIVER")
         model_profiles = Profile.objects.filter(human=request.user, profiletype="MODEL")
         context = {

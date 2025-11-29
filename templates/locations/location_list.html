@@ -16,7 +16,7 @@
               </a>
             {% else %}
               <img src="/static/nophoto_{{ location.profile.profiletype }}.png" alt="Avatar" class="avatar" />
-            {% endif %}<br />
+            {% endif %}
             <a href="{% url 'profiles:update-profile' location.profile.uuid %}">Edit</a>
           </td>
           <td>
@@ -45,7 +45,7 @@
     <h3>Unfinished Model Builds</h3>
   </div>
   {% for location in unused_location_profiles %}
-    <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ location.id }}/';">
+    <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ location.uuid }}/';">
       <table cellpadding="5" cellspacing="0">
         <tr>
           <td align="center" valign="top">
@@ -57,7 +57,7 @@
               <img src="/static/nophoto_{{ location.profiletype }}.png" alt="Avatar" class="avatar" />
             {% endif %}
             <br />
-            <a href="{% url 'locations:location_build' location.id %}">Build</a>
+            <a href="{% url 'locations:location_build' location.uuid %}">Build</a>
           </td>
           <td>
             <strong><u>{{ location.displayname }}</u></strong>
