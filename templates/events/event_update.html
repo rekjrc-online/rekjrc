@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- event_update.html -->
+
+<div class="page_header">Build Event</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<!-- Event update form section -->
+<div class="panel">
+  <h2>
+    Edit Event
+  </h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <button type="submit"
+       >
+      Save
+    </button>
+  </form>
+
+  <br />
+
+  <div>
+    <a href="{% url 'events:event_list' %}">Cancel</a>
+  </div>
+</div>
+
+<br /><br /><br />
+
+{% endblock %}

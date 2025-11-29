@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- profile_detail.html -->
+<div class="panel">
+
+  <center>
+    <a href="{% url 'profiles:update-profile' profile.uuid %}">Update Profile</a><br>
+    Profile Type: {{ profile.profiletype }}
+    <h1>{{ profile.displayname }}</h1>
+
+    {% if profile.avatar %}
+      <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}'s avatar" alt="Avatar" class="menu-avatar-large" />
+    {% else %}
+      <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="{{ profile.displayname }}'s avatar" alt="Avatar" class="menu-avatar-large" />
+    {% endif %}
+  </center>
+
+  {% if profile.bio %}
+    <p>
+      <center>
+        <div style="padding: 5px; border-radius: 0.25rem; border: solid 1px white; width: 300px;">
+          {{ profile.bio|linebreaksbr }}
+        </div>
+      </center>
+    </p>
+  {% endif %}
+
+  <table align="center">
+    {% if profile.city or profile.state %}
+      <tr>
+        <th align="left">Location:</th>
+        <td>{{ profile.city }} {{ profile.state }}</td>
+      </tr>
+    {% endif %}
+
+    {% if profile.website %}
+      <tr>
+        <th align="left">Web Site:</th>
+        <td><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a></td>
+      </tr>
+    {% endif %}
+  </table>
+
+  {% if related_objs %}
+    <center>
+      {% if profile.profiletype == "MODEL" %}
+        <h1>Build Attributes</h1>
+      {% elif profile.profiletype == "DRIVER" %}
+        <h1>Driver Attributes</h1>
+      {% elif profile.profiletype == "LOCATION" %}
+        <h1>Location Attributes</h1>
+      {% elif profile.profiletype == "RACE" %}
+        <h1><a href="{% url 'races:race_join' profile.uuid %}">Join Race</a></h1>
+        <a href="/media/qrcodes/race_{{ profile.id }}.png" target="_blank">
+          <img src="/media/qrcodes/race_{{ profile.id }}.png">
+        </a>
+      {% elif profile.profiletype == "TRACK" %}
+        <h1>Track Attributes</h1>
+      {% endif %}
+    </center>
+
+    {% for key, info in related_objs.items %}
+      {% if info %}
+        
+        {% if info.locations %}
+          <center>
+            <h2>Club Meet Locations</h2>
+
+            <table>
+              {% for loc in info.locations %}
+                <tr>
+                  <td>
+                    {% if loc.location.profile.avatar %}
+                      <img src="{{ loc.location.profile.avatar.url }}" alt="{{ loc.location.profile.displayname }}'s avatar" class="avatar">
+                    {% else %}
+                      <img src="/static/nophoto_{{ loc.location.profile.profiletype }}.png" alt="{{ loc.location.profile.displayname }}'s avatar" class="avatar">
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'profiles:detail-profile' loc.location.profile.uuid %}">
+                      {{ loc.location }}
+                    </a>
+
+                    {% if loc.location.latitude %}
+                      <br>
+                      <a href="https://www.google.com/maps/@{{ loc.location.latitude }},{{ loc.location.longitude }},24z" target="_blank">
+                        Google Map
+                      </a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </table>
+          </center>
+        {% endif %}
+
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {% if posts_with_images %}
+    <div class="panel">
+      <h3>Photos</h3>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px;">
+        {% for post in posts_with_images %}
+          <a href="{{ post.image.url }}" target="_blank">
+            <img src="{{ post.image.url }}" alt="Post image"
+                 style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; transition: transform 0.2s;">
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

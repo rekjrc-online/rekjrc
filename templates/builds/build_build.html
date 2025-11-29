@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- build_build.html -->
+<div class="page_header">Create Build for {{ profile.displayname }}</div>
+
+<form method="post" class="post card">
+    {% csrf_token %}
+
+    <!-- Display Profile info -->
+    <table>
+        <tr>
+            <td>Display Name:</td>
+            <td>{{ profile.displayname }}</td>
+        </tr>
+        <tr>
+            <td>Bio:</td>
+            <td>{{ profile.bio|linebreaksbr }}</td>
+        </tr>
+    </table>
+
+    <!-- Hidden Build fields -->
+    {{ form.human }}
+    {{ form.profile }}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Attribute Type</th>
+                <th>Value</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+            <tr>
+                <td>{{ form.attribute_type }}</td>
+                <td>{{ form.value }}</td>
+                <td>{{ form.DELETE }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {{ formset.management_form }}
+
+    <div>
+        <button type="submit">
+            Save Build
+        </button>
+    </div>
+</form>
+
+<br />
+<div>
+    <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
+</div>
+{% endblock %}

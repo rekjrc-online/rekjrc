@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- track_build.html -->
+
+<div class="page_header">Build Track</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<!-- Track form -->
+<div class="panel">
+    <h2>
+        {% if form.instance.pk %}Edit Track{% else %}Create Track{% endif %}
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Track</button>
+    </form>
+</div>
+
+{% endblock %}

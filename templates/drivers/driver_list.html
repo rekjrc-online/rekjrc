@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- driver_list.html -->
+
+<div class="panel" style="text-align: center;">
+    My Drivers
+    (<a href="/profiles/build/?profiletype=driver">New</a>)
+</div>
+
+{% if drivers %}
+    {% for driver in drivers %}
+        <div class="panel bgmouse" onclick="window.location.href='/profiles/{{ driver.id }}/';">
+            <table cellpadding="5" cellspacing="0">
+                <tr>
+                    <td align="center" valign="top">
+                        {% if driver.avatar %}
+                            <a target="_blank" href="{{ driver.avatar.url }}">
+                                <img src="{{ driver.avatar.url }}" alt="Avatar" class="avatar">
+                            </a>
+                        {% else %}
+                            <img src="/static/nophoto_{{ driver.profiletype }}.png" alt="Avatar" class="avatar">
+                        {% endif %}
+                        <a href="{% url 'profiles:update-profile' driver.uuid %}">Edit</a>
+                    </td>
+                    <td valign="top">
+                        <strong>{{ driver.displayname }}</strong>
+                        {% if driver.bio %}
+                            <p>{{ driver.bio|linebreaksbr }}</p>
+                        {% endif %}
+                        {% if driver.city or driver.state %}
+                            <p>Location: {{ driver.city }} {{ driver.state }}</p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No drivers found.</p>
+{% endif %}
+
+{% endblock %}

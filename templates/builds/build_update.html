@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- build_update.html -->
+<div class="page_header">Update Build for {{ profile.displayname }}</div>
+
+<form method="post" class="post card">
+    {% csrf_token %}
+
+    <!-- Profile Info -->
+    <div>
+        <label for="id_displayname">Display Name:</label>
+        <input type="text" name="displayname" id="id_displayname" value="{{ profile.displayname }}">
+
+        <label for="id_bio">Bio:</label>
+        <textarea name="bio" id="id_bio" rows="3">{{ profile.bio }}</textarea>
+    </div>
+
+    {% include "profiles/profile_edit_form.html" %}
+    <!-- Build Attributes -->
+    <div>
+        <label>Build Attributes:</label>
+        {{ formset.management_form }}
+        <div id="attributes-container">
+            {% for form in formset.forms %}
+                <div class="attribute-row">
+                    {{ form.attribute_type }}
+                    {{ form.value }}
+                    {% if form.DELETE %}
+                        {{ form.DELETE }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="add-attribute">Add Attribute</button>
+    </div>
+
+    <!-- Hidden Build fields -->
+    {{ form.human }}
+    {{ form.profile }}
+
+    <div>
+        <button type="submit">
+            Save Build
+        </button>
+    </div>
+</form>
+
+<br />
+<div>
+    <a href="{% url 'builds:build_list' %}">Back to My Builds</a>
+</div>
+
+<script>
+    // JS to dynamically add new attribute forms
+    const addBtn = document.getElementById('add-attribute');
+    const container = document.getElementById('attributes-container');
+    const totalForms = document.getElementById('id_attributes-TOTAL_FORMS');
+
+    addBtn.addEventListener('click', () => {
+        const formIdx = parseInt(totalForms.value);
+        const emptyFormHtml = `{{ formset.empty_form.as_p|escapejs }}`.replace(/__prefix__/g, formIdx);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'attribute-row';
+        wrapper.style.display = 'flex';
+        wrapper.style.gap = '5px';
+        wrapper.style.alignItems = 'center';
+        wrapper.innerHTML = emptyFormHtml;
+        container.appendChild(wrapper);
+        totalForms.value = formIdx + 1;
+    });
+</script>
+
+{% endblock %}

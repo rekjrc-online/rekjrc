@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- location_list.html -->
+<div class="panel" style="text-align: center;">
+  <h3>My Locations (<a href="/profiles/build/?profiletype=location">New</a>)</h3>
+</div>
+{% if locations %}
+  {% for location in locations %}
+    <div class="panel" onclick="window.location.href='/profiles/{{ location.profile.uuid }}/';">
+      <table cellpadding="5" cellspacing="0">
+        <tr>
+          <td align="center" valign="top">
+            {% if location.profile.avatar %}
+              <a target="_blank" href="{{ location.profile.avatar.url }}">
+                <img src="{{ location.profile.avatar.url }}" alt="Avatar" class="avatar" />
+              </a>
+            {% else %}
+              <img src="/static/nophoto_{{ location.profile.profiletype }}.png" alt="Avatar" class="avatar" />
+            {% endif %}<br />
+            <a href="{% url 'profiles:update-profile' location.profile.uuid %}">Edit</a>
+          </td>
+          <td>
+            <strong><u>{{ location.profile.displayname }}</u></strong>
+            {% if location.profile.bio %}
+              <p>{{ location.profile.bio|linebreaksbr }}</p>
+            {% endif %}
+            {% if location.profile.city or location.profile.state %}
+              <p>
+                Location: {{ location.profile.city }} {{ location.profile.state }}
+              </p>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="panel">
+    None found<br /><br />
+    <a href="/profiles/">Back to Profiles</a>
+  </div>
+{% endif %}
+{% if unused_location_profiles %}
+  <div class="panel">
+    <h3>Unfinished Model Builds</h3>
+  </div>
+  {% for location in unused_location_profiles %}
+    <div class="post card bgmouse" onclick="window.location.href='/profiles/{{ location.id }}/';">
+      <table cellpadding="5" cellspacing="0">
+        <tr>
+          <td align="center" valign="top">
+            {% if location.avatar %}
+              <a target="_blank" href="{{ location.avatar.url }}">
+                <img src="{{ location.avatar.url }}" alt="Avatar" class="avatar" />
+              </a>
+            {% else %}
+              <img src="/static/nophoto_{{ location.profiletype }}.png" alt="Avatar" class="avatar" />
+            {% endif %}
+            <br />
+            <a href="{% url 'locations:location_build' location.id %}">Build</a>
+          </td>
+          <td>
+            <strong><u>{{ location.displayname }}</u></strong>
+            {% if location.bio %}
+              <p>{{ location.bio|linebreaksbr }}</p>
+            {% endif %}
+            {% if location.city or location.state %}
+              <p>Location: {{ location.city }} {{ location.state }}</p>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% endfor %}
+{% endif %}
+{% endblock %}

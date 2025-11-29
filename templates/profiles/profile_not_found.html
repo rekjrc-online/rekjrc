@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- profile_not_found.html -->
+<div class="middle-col">
+    <h1>Profile not found</h1>
+    <p>That profile may have been deleted or moved.</p>
+    <a href="{% url 'homepage' %}">Go back home</a>
+</div>
+{% endblock %}

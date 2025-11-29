@@ -1,0 +1,29 @@
+<!-- verification.html -->
+<div class="panel">
+    <center>
+        <h2>Verification</h2>
+        <p>Sorry, you can't post yet because you aren't verified.</p>
+        <p>Enter a valid 8-digit invitation code to verify your account:</p>
+        <form method="post" action="{% url 'verify-invitation' %}">
+            {% csrf_token %}
+            <input type="text" name="code" maxlength="8" pattern="\d{8}"
+                    placeholder="Enter 8-digit code"
+                
+                    required>
+            <br /><br />
+            <button type="submit"
+                >
+                Verify
+            </button>
+        </form>
+        {% if messages %}
+            <div>
+                {% for message in messages %}
+                    <p>
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </center>
+</div>

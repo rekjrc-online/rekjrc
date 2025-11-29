@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- location_build.html -->
+
+<div class="page_header">Build Location</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<!-- Location form section -->
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">
+        Save
+    </button>
+  </form>
+  <br />
+</div>
+<br />
+<br />
+
+{% endblock %}

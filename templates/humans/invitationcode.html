@@ -1,0 +1,35 @@
+<!-- invitationcode.html -->
+<div class="panel">
+    <center>
+        <h2>Invitations</h2>
+        <p>
+            RekjRC is invitation-only. You can<br />
+            have one invitation at a time, and<br />
+            once your invitation has been accepted,<br />
+            you can request a new one 12 hours later.
+        </p>
+        {% if user.is_authenticated %}
+            {% if user.invitation_code %}
+                <p>
+                    <strong>Your Invitation Code:</strong><p>
+                    <h3>{{ user.invitation_code }}</h3>
+                </p>
+            {% else %}
+                {% if hours_remaining > 0 %}
+                    <p>You must wait {{ hours_remaining|floatformat:1 }} hours before generating a new invitation.</p>
+                {% else %}
+                    <form method="post" action="{% url 'generate-invitation' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                            >
+                            Generate Invitation Code
+                        </button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <p>You must be logged in to generate invitations</p>
+        {% endif %}
+        <p>Please use your invitations responsibly</p>
+    </center>
+</div>

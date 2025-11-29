@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Profile</h2>
+<form method="post">
+    {% csrf_token %}
+
+    <!-- ===== Profile Form ===== -->
+    <fieldset>
+        <legend>Profile Information</legend>
+        {{ profile_form.as_p }}
+    </fieldset>
+
+    <!-- ===== Related Object Form ===== -->
+    {% if related_form %}
+    <fieldset>
+        <legend>{{ related_type|capfirst }} Details</legend>
+        {{ related_form.as_p }}
+    </fieldset>
+    {% endif %}
+
+    <!-- ===== Subform Formsets as Accordions ===== -->
+    <div class="accordion" id="subformsAccordion">
+        {% for key, formset in view.context_data.items %}
+            {% if key.endswith("_formset") %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="heading{{ key }}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ key }}" aria-expanded="false" aria-controls="collapse{{ key }}">
+                        {{ key|replace:"_formset"|capfirst }}
+                    </button>
+                </h2>
+                <div id="collapse{{ key }}" class="accordion-collapse collapse" aria-labelledby="heading{{ key }}" data-bs-parent="#subformsAccordion">
+                    <div class="accordion-body">
+                        {{ formset.management_form }}
+                        {% for form in formset %}
+                            <!-- Remove alternating background classes -->
+                            <div class="subform-row mb-2 p-2 border rounded">
+                                {{ form.as_p }}
+                                {% if form.DELETE %}
+                                    <div class="form-check">
+                                        {{ form.DELETE }} <label class="form-check-label">Delete</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3">Save</button>
+</form>
+{% endblock %}

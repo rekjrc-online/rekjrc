@@ -1,0 +1,37 @@
+{% extends "base.html" %} {% block content %}
+<!-- club_list.html -->
+
+<div class="panel" style="text-align: center;"><h3>My Clubs</h3></div>
+
+{% if clubs %} {% for club in clubs %}
+<div class="panel bgmouse" onclick="window.location.href='/profiles/{{ club.profile.uuid }}/';">
+  <table cellpadding="5" cellspacing="0">
+    <tr>
+      <td align="center" valign="top" style="padding-right:15px;">
+        {% if club.profile.avatar %}
+          <a target="_blank" href="{{ club.profile.avatar.url }}">
+            <img src="{{ club.profile.avatar.url }}" alt="Avatar" class="avatar" />
+          </a>
+        {% else %}
+          <img src="/static/nophoto_{{ club.profile.profiletype }}.png" alt="Avatar" class="avatar" />
+        {% endif %}
+        <a href="{% url 'profiles:update-profile' club.profile.uuid %}">Edit</a>
+      </td>
+      <td valign="top">
+        <strong><u>{{ club.profile.displayname }}</u></strong>
+        {% if club.profile.bio %}
+          <p>{{ club.profile.bio|linebreaksbr }}</p>
+        {% endif %}
+        {% if club.profile.city or club.profile.state %}
+          <p>Location: {{ club.profile.city }} {{ club.profile.state }}</p>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+{% endfor %} {% else %}
+<div class="panel">
+  None found<br /><br />
+  <a href="/profiles/">Back to Profiles</a>
+</div>
+{% endif %} {% endblock %}

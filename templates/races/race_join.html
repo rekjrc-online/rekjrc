@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- race_join.html -->
+
+<div class="panel" style="text-align: center;">
+    <h3>Join: {{ race.profile.displayname }}</h3>
+</div>
+
+<div class="panel">
+<form method="post">
+    {% csrf_token %}
+
+    <p><strong>Select your driver:</strong></p>
+    <table>
+        <tbody>
+            {% for profile in driver_profiles %}
+            <tr>
+                <td>
+                    <input type="radio" name="driver_id" value="{{ profile.id }}" required>
+                </td>
+                <td>
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% else %}
+                        <img src="/static/nophoto_DRIVER.png" class="avatar">
+                    {% endif %} &nbsp;
+                </td>
+                <td>
+                    {{ profile.displayname }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p><strong>Select your model:</strong></p>
+    <table>
+        <tbody>
+            {% for profile in model_profiles %}
+            <tr>
+                <td>
+                    <input type="radio" name="model_id" value="{{ profile.id }}" required>
+                </td>
+                <td>
+                    {% if profile.avatar %}
+                        <img src="{{ profile.avatar.url }}" alt="{{ profile.displayname }}" class="avatar">
+                    {% else %}
+                        <img src="/static/nophoto_MODEL.png" class="avatar">
+                    {% endif %} &nbsp;
+                </td>
+                <td>
+                    {{ profile.displayname }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if race.transponder %}
+        <p><strong>Transponder Number:</strong></p>
+        <input
+            type="text"
+            name="transponder"
+            maxlength="10"
+            placeholder="{{ race.transponder }} ID Required"
+           
+            required
+        >
+    {% endif %}
+
+
+    <div>
+        <button type="submit">
+            Join Race
+        </button>
+    </div>
+    <br />
+</form>
+</div>
+
+<br /><br /><br />
+
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %} {% block content %}
+<!-- event_list.html -->
+
+<div class="panel" style="text-align: center;"><h3>My Events</h3></div>
+
+{% if events %} {% for event in events %}
+<div class="panel bgmouse" onclick="window.location.href='/profiles/{{ event.profile.uuid }}/';">
+  <table cellpadding="5" cellspacing="0">
+    <tr>
+      <td align="center" valign="top">
+        {% if event.profile.avatar %}
+        <a target="_blank" href="{{ event.profile.avatar.url }}">
+          <img
+            src="{{ event.profile.avatar.url }}"
+            alt="Avatar"
+            class="avatar"
+          />
+        </a>
+        {% else %}
+        <img
+          src="/static/nophoto_{{ event.profile.profiletype }}.png"
+          alt="Avatar"
+          class="avatar"
+        />
+        {% endif %}<br />
+        <a href="{% url 'profiles:update-profile' event.uuid %}">Edit</a>
+      </td>
+      <td>
+        <strong><u>{{ event.profile.displayname }}</u></strong>
+        {% if event.profile.bio %}
+        <p>{{ event.profile.bio|linebreaksbr }}</p>
+        {% endif %} {% if event.profile.city or event.profile.state %}
+        <p>Location: {{ event.profile.city }} {{ event.profile.state }}</p>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+{% endfor %} {% else %}
+<div class="panel">
+  None found<br /><br />
+  <a href="/profiles/">Back to Profiles</a>
+</div>
+{% endif %} {% endblock %}

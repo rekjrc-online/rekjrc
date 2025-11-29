@@ -1,0 +1,81 @@
+{% extends "base.html" %} {% block content %}
+<!-- build_list.html -->
+
+<div class="panel" style="text-align: center">
+  My Builds (<a href="/profiles/build/?profiletype=model"
+    ><span style="color: var(--text-link-hover)">New</span></a
+  >)
+</div>
+
+{% if builds %} {% for build in builds %}
+<div
+  class="post bgmouse"
+  onclick="window.location.href='/profiles/{{ build.profile.uuid }}/';"
+>
+  <table cellpadding="5" cellspacing="0">
+    <tr>
+      <td align="center" valign="top">
+        {% if build.profile.avatar %}
+        <a target="_blank" href="{{ build.profile.avatar.url }}">
+          <img
+            src="{{ build.profile.avatar.url }}"
+            alt="Avatar"
+            class="avatar"
+          />
+        </a>
+        {% else %}
+        <img
+          src="/static/nophoto_{{ build.profile.profiletype }}.png"
+          alt="Avatar"
+          class="avatar"
+        />
+        {% endif %}
+        <a href="{% url 'profiles:update-profile' build.profile.uuid %}">Edit</a>
+      </td>
+      <td valign="top">
+        <strong>{{ build.profile.displayname }}</strong>
+        {% if build.profile.bio %}
+        <p>{{ build.profile.bio|linebreaksbr }}</p>
+        {% endif %} {% if build.profile.city or build.profile.state %}
+        <p>Location: {{ build.profile.city }} {{ build.profile.state }}</p>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+{% endfor %} {% else %}
+<div class="panel">
+  None found<br /><br />
+  <a href="/profiles/">Back to Profiles</a>
+</div>
+{% endif %} {% if unbuilt_models %}
+<div class="panel" style="text-align: center">Unfinished Model Builds</div>
+
+{% for profile in unbuilt_models %}
+<div class="panel bgmouse">
+  <table cellpadding="0" cellspacing="0">
+    <tr>
+      <td align="center" valign="top">
+        {% if profile.avatar %}
+        <a target="_blank" href="{{ profile.avatar.url }}">
+          <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar" />
+        </a>
+        {% else %}
+        <img src="/static/nophoto_MODEL.png" alt="Avatar" class="avatar" />
+        {% endif %}
+        <a href="{% url 'profiles:update-profile' profile.uuid %}">Edit</a> /
+        <a href="{% url 'profiles:detail-profile' profile.uuid %}">View</a><br />
+        <a href="{% url 'builds:build_build' profile.uuid %}">Build</a>
+      </td>
+      <td valign="top">
+        <strong>{{ profile.displayname }}</strong>
+        {% if profile.bio %}
+        <p>{{ profile.bio|linebreaksbr }}</p>
+        {% endif %} {% if profile.city or profile.state %}
+        <p>Location: {{ profile.city }} {{ profile.state }}</p>
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+</div>
+{% endfor %} {% endif %} {% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- track_list.html -->
+
+<div class="panel" style="text-align: center">
+  <font size="+1">My Tracks (<a href="/profiles/build/?profiletype=track">New</a>)</font>
+</div>
+
+{% if tracks %}
+  {% for track in tracks %}
+    <div class="post bgmouse" onclick="window.location.href='/profiles/{{ track.profile.uuid }}/';">
+      <table cellpadding="5" cellspacing="0">
+        <tr>
+          <td valign="top" align="center" nowrap>
+            {% if track.profile.avatar %}
+              <a target="_blank" href="{{ track.profile.avatar.url }}">
+                <img src="{{ track.profile.avatar.url }}" alt="Avatar" class="avatar" />
+              </a>
+            {% else %}
+              <img src="/static/nophoto_{{ track.profile.profiletype }}.png" alt="Avatar" class="avatar" />
+            {% endif %}
+            <p><a href="{% url 'profiles:update-profile' track.profile.uuid %}">Edit</a></p>
+          </td>
+          <td></td>
+          <td valign="top">
+            <b>{{ track.profile.displayname }}</b>
+            <p>
+              <strong>Track Type:</strong> {{ track.track_type }}<br />
+              {% if track.event %}
+                <strong>Event:</strong> {{ track.event }}<br />
+              {% endif %}
+              {% if track.location %}
+                <strong>Location:</strong>{{ track.location }}<br />
+              {% endif %}
+              {% if track.club %}
+                <strong>Club:</strong> {{ track.club }}<br />
+              {% endif %}
+              {% if track.team %}
+                <strong>Team:</strong> {{ track.team }}<br />
+              {% endif %}
+            </p>
+            {% if track.attributes.exists %}
+            <table>
+              {% for attr in track.attributes.all %}
+              <tr>
+                <td>{{ attr.attribute.name }}</td>
+                <td>{{ attr.value }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% else %}
+            <p>No attributes yet.</p>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="panel">
+    None found<br /><br />
+    <a href="/profiles/">Back to Profiles</a>
+  </div>
+{% endif %}
+{% endblock %}

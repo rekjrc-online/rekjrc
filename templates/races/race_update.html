@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- race_update.html -->
+{% include "profiles/profile_header.html" %}
+
+<form method="post" novalidate>
+    {% csrf_token %}
+
+    <div class="panel">
+        {% include "races/race_form.html" %}
+        <button type="submit"
+           >
+            Save Race
+        </button>
+    </div>
+
+    <div class="panel">
+        {% if attribute_formset %}
+            <center><h3>Race Attributes</h3></center>
+            {{ attribute_formset.management_form }}
+
+            <table id="attributes-table">
+                <thead>
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for form in attribute_formset.forms %}
+                        {{ form.id }}
+                        <tr>
+                            <td>{{ form.attribute }}</td>
+                            <td>{{ form.value }}</td>
+                            <td>
+                                {{ form.DELETE }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <button type="submit"
+               >
+                Save Race
+            </button>
+        {% endif %}
+    </div>
+</form>
+
+<div>
+    <a href="{% url 'profiles:detail-profile' profile.id %}">Back To Race Detail</a>
+</div>
+
+<br /><br /><br />
+
+{% endblock %}

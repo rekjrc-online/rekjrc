@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- location_form.html -->
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+<div class="panel">
+  <div class="card-header">
+    {% if is_update %}Update{% else %}Create{% endif %} Location
+  </div>
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">
+        {% if is_update %}Update{% else %}Save{% endif %}
+      </button>
+      <br />
+      <br />
+      <center>
+        <a href="{% url 'profiles:detail-profile' profile.id %}" class="btn btn-secondary">Cancel</a>
+      </center>
+    </form>
+    <br />
+  </div>
+</div>
+<br />
+<br />
+<br />
+{% endblock %}

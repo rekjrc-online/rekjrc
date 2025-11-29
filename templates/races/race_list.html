@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- race_list.html -->
+
+<div class="panel" style="text-align: center;">
+    My Races (<a href="/profiles/build/?profiletype=driver">New</a>)
+</div>
+
+{% if profiles %}
+    {% for profile in profiles %}
+        <div class="post bgmouse" onclick="window.location.href='/profiles/{{ profile.uuid }}/';">
+            <table cellpadding="5" cellspacing="0">
+                <tr>
+                    <td valign="top" align="center" nowrap>
+                        {% if profile.avatar %}
+                            <a target="_blank" href="{{ profile.avatar.url }}">
+                                <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                            </a>
+                        {% else %}
+                            <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                        {% endif %}
+                        <p>
+                            <a href="{% url 'profiles:update-profile' profile.uuid %}">Edit</a>
+                        </p>
+                    </td>
+                    <td valign="top">
+                        {% if not profile.race %}
+                            <p>No race info yet.</p>
+                        {% else %}
+                            <u>Profile:</u> {{ profile.displayname }}<br />
+                            <u>Race Type:</u> {{ profile.race.race_type }}<br />
+                            {% if profile.race.event %}
+                                <u>Event:</u> {{ profile.race.event }}<br />
+                            {% endif %}
+                            {% if profile.race.location %}
+                                <u>Location:</u> {{ profile.race.location }}<br />
+                            {% endif %}
+                            {% if profile.race.club %}
+                                <u>Club:</u> {{ profile.race.club }}<br />
+                            {% endif %}
+                            {% if profile.race.team %}
+                                <u>Team:</u> {{ profile.race.team }}<br />
+                            {% endif %}
+                            <u>Entries:</u> {{ profile.driver_count }}<br />
+                            <br />
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+            <center>
+                <font size="+2">
+                    {% if profile.race.race_type == "Lap Race" %}
+                        <a href="{% url 'races:lapmonitor_upload' profile.race.uuid %}">Upload LapMonitor</a><br />
+                        <a href="{% url 'races:lapmonitor_upload' profile.race.uuid %}">Upload MyLaps</a>
+                    {% elif profile.race.race_type == "Drag Race" %}
+                        <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}" onclick="event.stopPropagation(); return confirm('This will lock the race against further entries\r\n\r\nAre you sure?')">Run Drag Race</a>
+                    {% elif profile.race.race_type == "Out and Back" %}
+                        <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}">Run Out-and-Back Race</a>
+                    {% elif profile.race.race_type == "Crawler Comp" %}
+                        <a href="{% url 'races:race_crawler_comp' profile.uuid profile.race.uuid %}">Run Crawler Competition</a>
+                    {% endif %}
+                </font>
+            </center>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="panel">
+        None found<br /><br />
+        <a href="/profiles/">Back to Profiles</a> /
+        <a href="/profiles/build/">Create Profile</a>
+    </div>
+{% endif %}
+
+<br /><br /><br />
+
+{% endblock %}

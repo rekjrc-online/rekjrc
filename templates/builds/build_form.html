@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- build_form.html -->
+
+<div class="page_header">Model Build</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<h3>{% if build %}Edit Model Build{% else %}Create New Model Build{% endif %}</h3>
+
+{% if not user.is_verified %}
+    <p class="text-danger">
+        Your account is not verified. You must verify your account before you can create a build.
+    </p>
+    <a href="/humans/update/">Verify your account</a>
+{% elif user.profile_set.exists %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="panel">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {{ form.profile }}
+            <div>
+                {{ form.name.label_tag }}<br />
+                {{ form.name }}
+                {{ form.name.errors }}
+            </div>
+            <div>
+                {{ form.description.label_tag }}<br />
+                {{ form.description }}
+                {{ form.description.errors }}
+                <div>
+                    <span id="char-count">500</span> characters remaining
+                </div>
+            </div>
+            <script>
+                const textarea = document.getElementById('id_description');
+                const charCount = document.getElementById('char-count');
+                const maxLength = 500;
+                textarea.setAttribute('maxlength', maxLength);
+                textarea.addEventListener('input', () => {
+                    const remaining = maxLength - textarea.value.length;
+                    charCount.textContent = remaining;
+                });
+            </script>
+            <button type="submit">
+                {% if build %}Save Build{% else %}Create Build{% endif %}
+            </button>
+
+        </div>
+        <div class="panel">
+            <div>
+                {% if attribute_formset %}
+                    {{ attribute_formset.management_form }}
+                    <table id="attributes-table">
+                        <thead>
+                            <tr>
+                                <th>Attribute</th>
+                                <th>Value</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for form in attribute_formset.forms %}
+                                {{ form.id }}
+                                <tr>
+                                    <td>{{ form.attribute_type }}</td>
+                                    <td>{{ form.value }}</td>
+                                    <td>
+                                        {% if form.instance.pk %}
+                                            {{ form.DELETE }}
+                                        {% else %}
+                                            <button type="button" id="add-attribute">
+                                                +
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            <tr class="empty-form">
+                                <td>{{ attribute_formset.empty_form.attribute_type }}</td>
+                                <td>{{ attribute_formset.empty_form.value }}</td>
+                                <td>
+                                    <button type="button" id="pending">
+                                        +
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <script>
+                        function addAttributeRow(event) {
+                            const tableBody = document.querySelector('#attributes-table tbody');
+                            const totalForms = document.getElementById('id_attributes-TOTAL_FORMS');
+                            const formIdx = parseInt(totalForms.value);
+
+                            // Get the current row where the button was clicked
+                            const currentRow = event.target.closest('tr');
+                            const attributeSelect = currentRow.querySelector('select'); // or input[name$="-attribute_type"]
+                            const valueInput = currentRow.querySelector('input');       // adjust selector if needed
+
+                            // Validation: only proceed if both fields have a value
+                            if (!attributeSelect.value || !valueInput.value.trim()) {
+                                return;
+                            }
+                            const newRow = document.querySelector('.empty-form').cloneNode(true);
+                            newRow.classList.remove('empty-form');
+                            newRow.style.display = '';
+                            newRow.innerHTML = newRow.innerHTML.replace(/__prefix__/g, formIdx);
+                            const btn = newRow.querySelector('#pending');
+                            if (btn) {
+                                btn.id = 'add-attribute';
+                                btn.addEventListener('click', addAttributeRow);
+                            }
+                            tableBody.appendChild(newRow);
+                            totalForms.value = formIdx + 1;
+                            const btn2 = event.target;
+                            const textNode = document.createElement('span');
+                            textNode.textContent = "Add";
+                            btn2.replaceWith(textNode);
+                        }
+                        document.addEventListener('DOMContentLoaded', () => {
+                            const addBtn = document.getElementById('add-attribute');
+                            if (addBtn) {
+                                addBtn.addEventListener('click', addAttributeRow);
+                            }
+                        });
+                    </script>
+                {% endif %}
+            </div>
+        <br /><br /><br /><br />
+    </div>
+    </form>
+{% else %}
+    <p>
+        You must create a profile before you can create a build.
+        <br /><br />
+        <a href="/profiles/">Create a profile</a>
+    </p>
+{% endif %}
+<br /><br /><br />
+{% endblock %}

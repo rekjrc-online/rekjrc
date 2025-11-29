@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- confirm_delete.html -->
+<div class="middle-col">
+    <h3>Delete Profile</h3>
+    <p>Are you sure you want to delete your profile "{{ profile.displayname }}"?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">
+            Yes, delete my profile
+        </button>
+        <a href="{% url 'profiles:profiles-list' %}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!-- post.html -->
+<div class="post bgmouse" onclick="window.location.href='/posts/{{ post.uuid }}/';">
+    <div class="d-flex align-items-start mb-1 gap-2">
+        <!-- Avatar -->
+        {% if post.profile.avatar %}
+            <a target="_blank" href="{{ post.profile.avatar.url }}">
+                <img src="{{ post.profile.avatar.url }}" 
+                    alt="{{ post.profile.displayname }}" class="avatar">
+            </a>
+        {% else %}
+            <img src="/static/nophoto_{{ post.profile.profiletype }}.png" alt="Avatar" class="avatar">
+        {% endif %}
+        <!-- Right content: name/type/timestamp + post content -->
+        <div class="post-right-content" style="flex: 1;">
+            <div class="d-flex align-items-center gap-1 mb-1">
+                <a href="/profiles/{{ post.profile.uuid }}/">
+                    {{ post.profile.get_profiletype_display }} -
+                    <span style="color:var(--text-link-hover);">
+                        {{ post.profile.displayname }}
+                    </span> -
+                    <span>{{ post.posted_date_delta }}</span>
+                </a>
+            </div>
+            <p class="mb-1">{{ post.display_content|safe|linebreaksbr }}</p>
+            {% if post.image %}
+                <a target="_blank" href="{{ post.image.url }}">
+                    <img src="{{ post.image.url }}" alt="Post image">
+                </a>
+            {% endif %}
+            {% if post.youtube_id %}
+                <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
+            {% endif %}
+            <div class="metrics" data-post-id="{{ post.id }}">
+                {% include "posts/post_metrics.html" %}
+            </div>
+        </div>
+    </div>
+</div>

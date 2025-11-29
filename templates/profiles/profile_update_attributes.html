@@ -1,0 +1,64 @@
+<!-- profile_update_attributes.html -->
+{% for key, formset in subformsets.items %}
+    <h3>{{ key|capfirst }}</h3>
+
+    {{ formset.management_form }}
+
+    <table class="attr-table">
+        <thead>
+            <tr>
+                {% for field in formset.empty_form.visible_fields %}
+                    {% if field.name != 'DELETE' %}
+                        <th>{{ field.label }}</th>
+                    {% endif %}
+                {% endfor %}
+                <th style="text-align:center;">Delete</th>
+            </tr>
+        </thead>
+
+        <tbody id="{{ key }}-tbody">
+            {% for form in formset.forms %}
+                <tr>
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+
+                    {% for field in form.visible_fields %}
+                        {% if field.name != 'DELETE' %}
+                            <td>
+                                {{ field }}
+
+                                {% if field.help_text %}
+                                    <small class="helptext">{{ field.help_text }}</small>
+                                {% endif %}
+
+                                {% for error in field.errors %}
+                                    <div class="error">{{ error }}</div>
+                                {% endfor %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+
+                    <td class="delete-cell">
+                        {% if form.DELETE %}
+                            {% if form.instance.pk %}
+                                <button type="button"
+                                    class="delete-btn"
+                                    onclick="deleteRow(this)">
+                                    Delete
+                                </button>
+                                <input type="hidden" name="{{ form.DELETE.name }}" id="{{ form.DELETE.id_for_label }}">
+                            {% else %}
+                                <button type="button"
+                                    class="add-btn"
+                                    onclick="deleteRow(this)">
+                                    Add
+                                </button>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}

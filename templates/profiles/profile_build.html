@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- profile_build.html -->
+<div class="panel" style="text-align: center;">
+    <h3>Create New Profile</h3>
+    Type={{ profiletype }}
+</div>
+
+<div class="panel">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Create Profile</button>
+    </form>
+</div>
+
+<br /><br /><br />
+
+{% endblock %}

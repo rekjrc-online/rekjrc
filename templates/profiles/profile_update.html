@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- profile_update.html -->
+<div class="panel">
+    <form action="{% url 'profiles:update-profile' profile.uuid %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <center>
+            <h3>Edit {{ profile.get_profiletype_display }}</h3>
+        </center>
+        {{ profile_form.as_p }}
+        {% if related_form %}
+            {{ related_form.as_p }}
+        {% endif %}
+        {% if profile.profiletype == "MODEL" %}
+            {% include "profiles/profile_update_attributes.html" %}
+        {% else %}
+        {% endif %}
+        <center>
+            <nowrap>
+                <button type="submit" class="btn-wide">Save</button><br /><br />
+                <button type="submit" class="btn-wide" onclick="self.location.href='/profiles/{{ profile.uuid }}/'">Cancel</button>
+            </nowrap>
+        </center>
+    </form>
+</div>
+{% endblock %}

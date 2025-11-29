@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- track_update.html -->
+
+<div class="page_header">Edit Track</div>
+
+{% include "profiles/profile_header.html" %}
+
+<div class="panel">
+    <h2>
+        {% if form.instance.pk %}Update Track{% else %}Create Track{% endif %}
+    </h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.human }} {{ form.profile }}
+
+        <!-- Track fields -->
+        <table>
+            {% for field in form %}
+                {% if field.name not in "human profile" %}
+                <tr>
+                    <th>{{ field.label_tag }}</th>
+                    <td>{{ field }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+
+        <!-- Attributes section -->
+        <h3>Attributes</h3>
+        {{ attribute_formset.management_form }}
+        <table>
+            <tr>
+                {% for form in attribute_formset.forms %}
+                    <td>
+                        {% for field in form.visible_fields %}
+                            {{ field }}
+                        {% endfor %}
+                        {% if form.instance.pk %}
+                            <!-- Existing attribute: remove button -->
+                            <button type="button" class="remove-attribute"
+                                   >
+                                -
+                            </button>
+                        {% else %}
+                            <!-- New attribute row: add button -->
+                            <button type="button" class="add-attribute"
+                                   >
+                                +
+                            </button>
+                        {% endif %}
+                    </td>
+                {% endfor %}
+            </tr>
+        </table>
+
+        <button type="submit"
+               >
+            Save
+        </button>
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Add attribute dynamically
+    document.querySelectorAll(".add-attribute").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+            let formsetTable = this.closest("table");
+            let totalForms = document.querySelector("#id_trackattribute_set-TOTAL_FORMS");
+            let formIdx = parseInt(totalForms.value);
+            let emptyRow = document.querySelector(".empty-form").cloneNode(true);
+            emptyRow.style.display = "";
+            emptyRow.querySelectorAll("input, select").forEach(function(input) {
+                let name = input.name.replace("__prefix__", formIdx);
+                let id = "id_" + name;
+                input.name = name;
+                input.id = id;
+                if(input.type!="hidden") input.value = "";
+            });
+            formsetTable.appendChild(emptyRow);
+            totalForms.value = formIdx + 1;
+        });
+    });
+
+    // Remove attribute dynamically
+    document.addEventListener("click", function(e) {
+        if(e.target.classList.contains("remove-attribute")) {
+            let td = e.target.closest("td");
+            td.remove();
+        }
+    });
+});
+</script>
+
+{% endblock %}

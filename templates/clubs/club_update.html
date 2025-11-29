@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block content %}
+<!-- club_confirm_delete.html -->
+
+<div class="page_header">Build Club</div>
+
+<!-- Profile summary section -->
+{% include "profiles/profile_header.html" %}
+
+<div class="panel">
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <h4>Locations</h4>
+        {{ location_formset.management_form }}
+
+        <table id="locations-table">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for form in location_formset.forms %}
+                <tr>
+                    <td>{{ form.location }}</td>
+                    <td>
+                        <button type="button" class="remove-location-btn">-</button>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                <!-- Empty form template (hidden) -->
+                <tr class="empty-form">
+                    <td>
+                        {{ location_formset.empty_form.location }}
+                    </td>
+                    <td>
+                        <button type="button" id="pending">+</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit"
+           >
+            Save Club
+        </button>
+    </form>
+    <br />
+</div>
+
+<style>
+.location-dropdown {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+</style>
+
+<script>
+function addLocationRow(event) {
+    console.log('--- addLocationRow triggered ---');
+
+    const tableBody = document.querySelector('#locations-table tbody');
+    console.log('tableBody:', tableBody);
+
+    const totalForms = document.getElementById('id_location_set-TOTAL_FORMS');
+    console.log('totalForms element:', totalForms);
+
+    const formIdx = parseInt(totalForms.value);
+    console.log('Current form index:', formIdx);
+
+    // Identify current row and validate
+    const currentRow = event.target.closest('tr');
+    console.log('Current row:', currentRow);
+
+    const selectInput = currentRow.querySelector('select');
+    console.log('Select input found:', selectInput);
+
+    if (selectInput && !selectInput.value) {
+        console.log('No value selected — skipping new row creation.');
+        return;
+    }
+
+    // Clone empty form
+    const emptyTemplate = document.querySelector('.empty-form');
+    console.log('Empty form template:', emptyTemplate);
+
+    const newRow = emptyTemplate.cloneNode(true);
+    newRow.classList.remove('empty-form');
+    newRow.style.display = '';
+    newRow.innerHTML = newRow.innerHTML.replace(/__prefix__/g, formIdx);
+    console.log('New row created:', newRow);
+
+    // Wire up the new "+" button
+    const btn = newRow.querySelector('#pending');
+    if (btn) {
+        btn.id = 'add-location';
+        btn.addEventListener('click', addLocationRow);
+        console.log('Wired new add-location button:', btn);
+    } else {
+        console.warn('No pending button found in new row!');
+    }
+
+    // Convert clicked + to a - button
+    const btn2 = event.target;
+    console.log('Original clicked button:', btn2);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-location-btn';
+    removeBtn.textContent = '-';
+    removeBtn.style.padding = '4px 8px';
+    removeBtn.addEventListener('click', (e) => {
+        console.log('Remove button clicked. Removing row:', e.target.closest('tr'));
+        e.target.closest('tr').remove();
+    });
+
+    console.log('Replacing + button with - button:', removeBtn);
+    btn2.replaceWith(removeBtn);
+
+    // Append the new row
+    tableBody.appendChild(newRow);
+    console.log('Appended new row to tableBody.');
+
+    // Increment the management form count
+    totalForms.value = formIdx + 1;
+    console.log('Updated totalForms value:', totalForms.value);
+
+    console.log('--- addLocationRow complete ---');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM fully loaded.');
+    const addBtn = document.getElementById('pending');
+    console.log('Initial add button:', addBtn);
+
+    if (addBtn) {
+        addBtn.addEventListener('click', addLocationRow);
+        console.log('Initial add-location event wired.');
+    } else {
+        console.warn('No #pending button found at DOM load!');
+    }
+});
+</script>
+
+{% endblock %}

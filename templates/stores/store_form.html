@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- store_form.html -->
+
+<div class="page_header">{% if form.instance.pk %}Edit Store{% else %}Create Store{% endif %}</div>
+
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit"
+     >
+      Save
+    </button>
+  </form>
+</div>
+
+{% endblock %}

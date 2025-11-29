@@ -1,0 +1,18 @@
+{% extends "base.html" %} {% block content %}
+<!-- location_confirm_delete.html -->
+<div class="card mt-4">
+  <div class="card-header">Delete Location</div>
+  <div class="card-body">
+    <p>Are you sure you want to delete <strong>{{ object.name }}</strong>?</p>
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Yes, delete</button>
+      <a
+        href="{% url 'locations:location_detail' object.profile.uuid %}"
+        class="btn btn-secondary"
+        >Cancel</a
+      >
+    </form>
+  </div>
+</div>
+{% endblock %}

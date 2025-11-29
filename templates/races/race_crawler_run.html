@@ -1,0 +1,76 @@
+<!-- race_crawler_run.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online - Run {{ racedriver.driver.displayname }}</title>
+<link rel="icon" href="/static/favicon.ico">
+<link rel="stylesheet" href="/static/colors-dark.css" />
+<link rel="stylesheet" href="/static/styles.css" />
+<link rel="stylesheet" href="/static/nav.css" />
+{% include "races/race_crawler_run_css.html" %}
+</head>
+<body>
+
+<center>
+<h2>Run: {{ racedriver.driver.displayname }}</h2>
+
+<div class="timers">
+    <div>
+        <div class="lcd-display" id="elapsedDisplay">00:00.00</div>
+        <small>Elapsed Time</small>
+    </div>
+    <div>
+        <div class="lcd-display" id="pointsDisplay">0</div>
+        <small>Penalty Points</small>
+    </div>
+</div>
+
+<form method="post" id="runForm" action="{% url 'races:race_crawler_run' profile_uuid=racedriver.driver.uuid race_uuid=race.uuid racedriver_uuid=racedriver.uuid %}">
+    {% csrf_token %}
+    <input type="hidden" id="elapsed_time" name="elapsed_time" value="{{ run.elapsed_time|default:"0" }}">
+    <input type="hidden" id="penalty_points" name="penalty_points" value="{{ run.penalty_points|default:"0" }}">
+    <input type="hidden" id="runLog" name="run_log">
+
+    <!-- Row 1: Start/Pause + Finish/Reset -->
+    <div class="button-row">
+        <button type="button" id="startStopBtn" style="background-color: red; color: white;">Start</button>
+        <button type="button" id="finishResetBtn" style="background-color: green; color: white;">Finish</button>
+    </div>
+
+    <!-- Row 2: +1, +5, +10 -->
+    <div class="button-row">
+        <button type="button" id="add1">+1</button>
+        <button type="button" id="add5">+5</button>
+        <button type="button" id="add10">+10</button>
+    </div>
+
+    <!-- Row 3: Gate buttons -->
+    <div class="button-row">
+        <button type="button" id="gate0Btn" style="background-color: purple; color: white;">Gate</button>
+        <button type="button" id="gate2Btn" style="background-color: purple; color: white;">-2</button>
+        <button type="button" id="gate10Btn" style="background-color: purple; color: white;">-10</button>
+    </div>
+
+    <!-- Row 4: Undo -->
+    <div class="button-row">
+        <button type="button" id="undoBtn" style="background-color: orange; color: white;">Undo</button>
+    </div>
+
+    <!-- Row 5: Submit (hidden until finish) -->
+    <div class="button-row">
+        <button type="submit" id="submitBtn" disabled>Submit</button>
+    </div>
+</form>
+
+<!-- Penalty log -->
+<div id="penaltyLog">
+    <table align="center" cellpadding="0" cellspacing="0"><tr><td>
+        <div id="penaltyList" style="text-align:left;"></div>
+    </td></tr></table>
+</div>
+</center>
+{% include "races/race_crawler_run_js.html" %}
+</body>
+</html>

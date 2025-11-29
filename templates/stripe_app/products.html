@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+    <h3>Join RekjRc Club - 6 months</h3>
+    <form action="{% url 'stripe:checkout' 'clubmembership' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Club Membership - $20</button>
+    </form>
+    <br />
+    <h3>Member Event Entry</h3>
+    <form action="{% url 'stripe:checkout' 'memberentry' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Member Entry - $10</button>
+    </form>
+    <br />
+    <form action="{% url 'stripe:checkout' 'memberguest' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Member Guest Entry - $10</button>
+    </form>
+    <br />
+    <h3>Visitor / Non-member</h3>
+    <form action="{% url 'stripe:checkout' 'visitorentry' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Visitor Entry - $20</button>
+    </form>
+</div>
+{% endblock %}
+

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- team_update.html -->
+
+<div class="page_header">{% if form.instance.pk %}Edit Team{% else %}Build Team{% endif %}</div>
+
+<!-- Profile summary -->
+{% include "profiles/profile_header.html" %}
+
+<div class="panel">
+  <form method="post">
+    {% csrf_token %}
+    <h2>Team Info</h2>
+    {{ form.as_p }}
+
+    <button type="submit">
+      Save
+    </button>
+  </form>
+</div>
+<br /><br /><br />
+{% endblock %}

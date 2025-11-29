@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- post_form.html -->
+<div class="panel">
+    <h3>Create New Post</h3>
+    {% if not user.is_verified %}
+        <p class="text-danger">
+            Your account is not verified. You must verify your account before you can post.
+        </p>
+        <a href="/humans/update/">Verify your account</a>
+    {% elif user.profile_set.all %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                {{ form.profile.label_tag }}
+                {{ form.profile }}
+            </div>
+            <div>
+                {{ form.content }}
+                <span id="char-count">200</span> characters remaining
+            </div>
+            <script>
+                const textarea = document.getElementById('{{ form.content.id_for_label }}');
+                const charCount = document.getElementById('char-count');
+                const maxLength = 200;
+                textarea.setAttribute('maxlength', maxLength);
+                textarea.addEventListener('input', () => {
+                    const remaining = maxLength - textarea.value.length;
+                    charCount.textContent = remaining;
+                });
+            </script>
+            <div>
+                Image: {{ form.image }}
+            </div>
+            <div>
+                Video URL: {{ form.video_url }}
+            </div>
+            <button type="submit">
+                Post
+            </button>
+        </form>
+    {% else %}
+        <p>
+            You must create a profile before you can post.
+            <br /><br />
+            <a href="/profiles/">Create a profile</a>
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

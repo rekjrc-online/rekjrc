@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- store_list.html -->
+
+<div class="panel" style="text-align: center;"><h3>My Stores</h3></div>
+
+{% if stores %}
+  {% for store in stores %}
+    <div class="panel">
+      <table cellpadding="5" cellspacing="0">
+        <tr>
+          <td valign="top" align="center" nowrap>
+            {% if store.profile.avatar %}
+              <a target="_blank" href="{{ store.profile.avatar.url }}">
+                <img src="{{ store.profile.avatar.url }}" alt="Avatar" class="avatar" />
+              </a>
+            {% else %}
+              <img src="/static/nophoto_{{ store.profile.profiletype }}.png" alt="Avatar" class="avatar" />
+            {% endif %}
+            <a href="{% url 'stores:store_build' store.profile.uuid %}">Build</a>
+          </td>
+          <td></td>
+          <td valign="top">
+            <b>{{ store.profile.displayname }}</b>
+            <p>
+              <strong>Store Type:</strong> {{ store.store_type }}<br />
+              {% if store.event %}<strong>Event:</strong> {{ store.event }}<br />{% endif %}
+              {% if store.location %}<strong>Location:</strong> {{ store.location }}<br />{% endif %}
+              {% if store.club %}<strong>Club:</strong> {{ store.club }}<br />{% endif %}
+              {% if store.team %}<strong>Team:</strong> {{ store.team }}<br />{% endif %}
+            </p>
+            {% if store.attributes.exists %}
+            <table>
+              {% for attr in store.attributes.all %}
+              <tr>
+                <td>{{ attr.attribute.name }}</td>
+                <td>{{ attr.value }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% else %}
+            <p>No attributes yet.</p>
+            {% endif %}
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="panel">
+    None found<br /><br />
+    <a href="/profiles/">Back to Profiles</a>
+  </div>
+{% endif %}
+{% endblock %}

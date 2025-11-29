@@ -1,0 +1,32 @@
+<!-- profile_header.html -->
+<div class="panel">
+    <table>
+        <tr>
+            <td align="center" valign="top">
+                {% if profile.avatar %}
+                    <a target="_blank" href="{{ profile.avatar.url }}">
+                        <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                    </a>
+                {% else %}
+                    <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                {% endif %}
+            </td>
+            <td valign="top">
+                <h3>
+                    <a href="/profiles/{{profile.id}}/update/">
+                        <u>{{ profile.displayname }}</u>
+                    </a>
+                </h3>
+                {% if profile.city %}
+                    <p>{{ profile.city }} {{ profile.state }}</p>
+                {% endif %}
+                {% if profile.website %}
+                    <p><a href="{{ profile.website }}" target="_blank">{{ profile.website }}</a>
+                {% endif %}
+                {% if profile.bio %}
+                    <p>{{ profile.bio|linebreaksbr }}</p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+</div>

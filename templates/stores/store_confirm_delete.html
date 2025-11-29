@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- store_confirm_delete.html -->
+<div class="panel">
+  <h3>Delete Store</h3>
+  <p>Are you sure you want to delete <strong>{{ store.name }}</strong>?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">
+      Confirm Delete
+    </button>
+  </form>
+
+  <a href="{% url 'store:detail' store.pk %}">Cancel</a>
+</div>
+
+{% endblock %}

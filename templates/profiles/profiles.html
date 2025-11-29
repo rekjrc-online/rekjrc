@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- profiles.html -->
+<div class="panel" style="text-align: center;">
+    <h3>Your Profiles (<a href="/profiles/build/">New</a>)</h3>
+</div>
+
+{% for profile in profiles %}
+    <div class="panel" onclick="window.location.href='/profiles/{{ profile.uuid }}/';">
+        <table border="0">
+            <tr>
+                <td valign="top" align="center" nowrap>
+                    {{ profile.get_profiletype_display }}<br />
+                    {% if profile.avatar %}
+                        <a target="_blank" href="{{ profile.avatar.url }}">
+                            <img src="{{ profile.avatar.url }}" alt="Avatar" class="avatar">
+                        </a>
+                    {% else %}
+                        <img src="/static/nophoto_{{ profile.profiletype }}.png" alt="Avatar" class="avatar">
+                    {% endif %}
+                    <a href="{% url 'profiles:update-profile' profile.uuid %}">Edit</a>
+                </td>
+                <td>&nbsp;&nbsp;</td>
+                <td valign="top">
+                    <b>{{ profile.displayname }}</b>
+                    {% if profile.bio %}<p>{{ profile.bio|linebreaksbr }}</p>{% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% empty %}
+    <p>You haven't added any profiles yet.</p>
+{% endfor %}
+
+{% endblock %}

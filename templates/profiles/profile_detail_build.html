@@ -1,0 +1,32 @@
+<!-- profile_detail_build.html -->
+{% if profile.builds %}
+    <div>
+        <h3>{{ profile.builds.name }}</h3>
+        {% if profile.builds.description %}
+            <p>{{ profile.builds.description|linebreaksbr }}</p>
+        {% else %}
+            <p><em>No description provided.</em></p>
+        {% endif %}
+
+        {% if profile.builds.attributes.all %}
+            <table>
+                {% for attr in profile.builds.attributes.all %}
+                    <tr>
+                        <td>{{ attr.attribute_type.name }}</td>
+                        <td>{{ attr.value }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="2"><em>No attributes added yet.</em></td></tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            {% comment %}<p><em>No attributes added yet.</em></p>{% endcomment %}
+        {% endif %}
+
+        {% if race.human == request.user %}
+            <div>
+                <a href="/builds/{{profile.id}}/update/">Update Build</a>
+            </div>
+        {% endif %}
+    </div>
+{% endif %}
