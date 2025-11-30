@@ -17,6 +17,7 @@ class ChatRoomView(LoginRequiredMixin, View):
 
         profiles = Profile.objects.filter(
             human=request.user,
+            profiletype='DRIVER'
         )
 
         return render(request, self.template_name, {
