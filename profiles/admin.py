@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import Profile, ProfileFollows
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('human', 'displayname', 'profiletype', 'city', 'state', 'follower_count')
-    search_fields = ('human__username', 'profiletype', 'displayname')
-    list_filter = ('human', 'profiletype', 'state', 'displayname')
+    list_display = ('human', 'displayname', 'profiletype', 'city', 'state', 'follower_count', 'chat_enabled')
+    search_fields = ('human__username', 'profiletype', 'displayname', 'chat_enabled')
+    list_filter = ('human', 'profiletype', 'state', 'displayname', 'chat_enabled')
 
 admin.site.register(Profile, ProfileAdmin)
 

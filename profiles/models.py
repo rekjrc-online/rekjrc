@@ -25,6 +25,7 @@ class Profile(BaseModel):
 	city = models.CharField(max_length=100, blank=True)
 	state = models.CharField(max_length=100, blank=True)
 	website = models.URLField(blank=True)
+	chat_enabled = models.BooleanField(default=False)
 
 	def __str__(self):
 		return f"{self.displayname} - {self.profiletype}"

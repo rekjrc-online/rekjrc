@@ -15,6 +15,13 @@
     {% endif %}
   </center>
 
+  {% if profile.chat_enabled %}
+    <br />
+    <form target="_blank" action="{% url 'chat:club_chat' profile.uuid %}" method="get">
+      <button type="submit">Enter Chat Room</button>
+    </form>
+  {% endif %}
+
   {% if profile.bio %}
     <p>
       <center>
