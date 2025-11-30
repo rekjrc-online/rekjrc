@@ -9,7 +9,7 @@ class BaseModelManager(models.Manager):
 class BaseModel(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, db_index=True, unique=True)
-    insertdate = models.DateTimeField(default=timezone.now)
+    insertdate = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     objects = BaseModelManager()
     all_objects = models.Manager()

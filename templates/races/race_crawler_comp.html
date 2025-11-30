@@ -58,7 +58,7 @@
 
 {% if not race.race_finished %}
     <br />
-    <form method="post" action="{% url 'races:race_crawler_finish' profile_uuid=race.profile.uuid race_uuid=race.uuid %}">
+    <form method="post" action="{% url 'races:race_lock_toggle' profile_uuid=race.profile.uuid race_uuid=race.uuid %}">
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">
             {% if race.entry_locked %}

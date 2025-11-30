@@ -15,6 +15,7 @@ urlpatterns = [
     path('', post_views.HomepageView.as_view(), name='homepage'),
     path('admin/', admin.site.urls),
     path('builds/', include('builds.urls')),
+    path('chat/', include('chat_app.urls', namespace="chat")),
     path('clubs/', include('clubs.urls')),
     path('drivers/', include('drivers.urls')),
     path('events/', include('events.urls')),
@@ -31,7 +32,6 @@ urlpatterns = [
     path('teams/', include('teams.urls')),
     path('tracks/', include('tracks.urls')),
     path('u/', include('urls_app.urls')),
-
 ]
 
 handler404 = 'rekjrc.urls.custom_404'

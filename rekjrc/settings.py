@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     # Your apps
     "builds",
+    "chat_app",
     "clubs",
     "drivers",
     "events",

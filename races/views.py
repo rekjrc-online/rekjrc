@@ -19,6 +19,18 @@ import csv
 import os
 import qrcode
 
+class RaceLockToggleView(View):
+    def post(self, request, profile_uuid, race_uuid):
+        race = get_object_or_404(Race, uuid=race_uuid, human=self.request.user)
+        if race.race_finished==True:
+            return HttpResponseForbidden("Race is already finished.")
+        if race.entry_locked==True:
+            race.entry_locked=False
+        else:
+            race.entry_locked=True
+        race.save()
+        return redirect(reverse("races:race_crawler_comp", kwargs={"profile_uuid": profile_uuid, "race_uuid":race_uuid}))
+
 class RaceCrawlerCompView(View):
     template_name = 'races/race_crawler_comp.html'
     def get(self, request, profile_uuid, race_uuid):
@@ -33,43 +45,26 @@ class RaceCrawlerCompView(View):
 
 
 class RaceCrawlerFinishView(LoginRequiredMixin, View):
-
     def post(self, request, profile_uuid, race_uuid, *args, **kwargs):
-
-        # 1️⃣ Get profile and race
         profile = get_object_or_404(Profile, uuid=profile_uuid)
-
-        # 2️⃣ Permission check
         if profile.human != request.user:
             return HttpResponseForbidden("You are not allowed to finish this race.")
-
         race = get_object_or_404(Race, profile=profile.id, uuid=race_uuid)
         if not race:
             return HttpResponseForbidden("Race does not exist.")
         if race.race_finished==True:
             return HttpResponseForbidden("Race is already finished.")
-
-        # 3️⃣ Pull crawler runs for those drivers
         runs = RaceCrawlerRun.objects.filter(
             race=race
         ).select_related('racedriver', 'racedriver__driver', 'racedriver__model')
-
         if not runs.exists():
             return HttpResponseForbidden("No runs found.")
-
-        # 4️⃣ Mark race as finished
         race.race_finished = True
         race.entry_locked = True
         race.save()
-
-        # 5️⃣ Format results by penalty_points (lowest points = winner)
         sorted_runs = runs.order_by('penalty_points', 'elapsed_time')  # elapsed_time secondary
-
-        # Determine winner(s)
         lowest_points = sorted_runs.first().penalty_points
         winners = [run for run in sorted_runs if run.penalty_points == lowest_points]
-
-        # Format winner content
         if len(winners) == 1:
             winner = winners[0]
             content = f"🏁 Winner 🏁\r\nDriver: {winner.racedriver.driver.displayname}\r\nModel: {winner.racedriver.model.displayname}\r\n"
@@ -77,28 +72,19 @@ class RaceCrawlerFinishView(LoginRequiredMixin, View):
             content = "🏁 Winners (tie) 🏁\r\n"
             for run in winners:
                 content += f"Driver: {run.racedriver.driver.displayname} | Model: {run.racedriver.model.displayname}\r\n"
-
-        # Start building result lines with winner info
         result_lines = [content]
-
-        # Append full leaderboard
         for idx, run in enumerate(sorted_runs, start=1):
             driver_name = run.racedriver.driver.displayname if run.racedriver.driver else '-driver-'
             model_name = run.racedriver.model.displayname if run.racedriver.model else '-model-'
             elapsed = f"{run.elapsed_time:.2f}s" if run.elapsed_time is not None else "No time"
             points = run.penalty_points
             result_lines.append(f"{idx}. {driver_name} | {model_name} | {points} pts | {elapsed}")
-
         results_text = "\r\n".join(result_lines) or "No runs recorded."
-
-        # 6️⃣ Create a Post from the race's profile
         Post.objects.create(
             human=request.user,
             profile=profile,
             content=results_text
         )
-
-        # 7️⃣ Redirect back to profile page (or wherever you want)
         return redirect(reverse("profiles:detail-profile", kwargs={"profile_uuid": profile.uuid}))
 
 
@@ -106,6 +92,8 @@ class RaceCrawlerRunView(View):
     template_name = 'races/race_crawler_run.html'
     def get(self, request, profile_uuid, race_uuid, racedriver_uuid):
         race = get_object_or_404(Race, uuid=race_uuid)
+        if race.race_finished==True:
+            return HttpResponseForbidden("Race is already finished.")
         racedriver = get_object_or_404(RaceDriver, uuid=racedriver_uuid)
         run, _ = RaceCrawlerRun.objects.get_or_create(race=race, racedriver=racedriver)
         return render(request, self.template_name, {
@@ -116,15 +104,7 @@ class RaceCrawlerRunView(View):
 
     def post(self, request, profile_uuid, race_uuid, racedriver_uuid):
         racedriver = get_object_or_404(RaceDriver, uuid=racedriver_uuid)
-        print("===")
-        print("RACEDRIVER",racedriver)
-        print("===")
         run = get_object_or_404(RaceCrawlerRun, race_id=racedriver.race_id, racedriver_id=racedriver.id)
-        print("===")
-        print("RUN",run)
-        print("===")
-
-        # Update elapsed time and penalty points
         elapsed = request.POST.get('elapsed_time')
         points = request.POST.get('penalty_points')
         if elapsed is not None:
@@ -133,14 +113,10 @@ class RaceCrawlerRunView(View):
             run.penalty_points = int(points)
         run.save()
         print(run)
-
-        # Handle CrawlerRunLog JSON
         run_log_json = request.POST.get('run_log')
-
         if run_log_json:
             try:
                 log_entries = json.loads(run_log_json)
-                # Optional: clear existing log entries
                 run.log_entries.all().delete()
                 for entry in log_entries:
                     CrawlerRunLog.objects.create(
@@ -170,13 +146,10 @@ class RaceCrawlerRunView(View):
                     Post.objects.create(
                         human=request.user,
                         profile=race.profile,
-                        content=post_text,
-                        display_content=post_text  # optional—depends how you use it
+                        content=post_text
                     )
             except (json.JSONDecodeError, KeyError, TypeError) as e:
-                # Optionally log the error
                 print(f"Failed to save run log: {e}")
-
         return redirect(
             'races:race_crawler_comp',
             profile_uuid=profile_uuid,
