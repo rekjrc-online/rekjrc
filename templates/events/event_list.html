@@ -1,7 +1,10 @@
 {% extends "base.html" %} {% block content %}
 <!-- event_list.html -->
 
-<div class="panel" style="text-align: center;"><h3>My Events</h3></div>
+<div class="panel" style="text-align: center;">
+  <h3>My Events</h3>
+  (<a href="/profiles/build/?profiletype=event">New</a>)
+</div>
 
 {% if events %} {% for event in events %}
 <div class="panel bgmouse" onclick="window.location.href='/profiles/{{ event.profile.uuid }}/';">

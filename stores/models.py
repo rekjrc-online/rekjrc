@@ -6,11 +6,11 @@ from rekjrc.base_models import BaseModel
 class Store(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='stores')
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='store')
     def __str__(self):
         return self.profile.displayname

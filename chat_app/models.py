@@ -6,15 +6,15 @@ from profiles.models import Profile
 class ChatMessage(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='chat_messages')
     profile = models.ForeignKey(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='chat_messages')
     channel_profile = models.ForeignKey(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='chat_messages_in_channel')
     content = models.TextField()
     class Meta:

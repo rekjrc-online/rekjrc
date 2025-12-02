@@ -21,19 +21,19 @@ def make_clickable_urls(text):
 class Post(BaseModel):
     human = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='posts',
         db_index=True
     )
     profile = models.ForeignKey(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='posts',
         db_index=True
     )
     parent = models.ForeignKey(
         'self',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='replies'
@@ -120,8 +120,8 @@ class Post(BaseModel):
 
 
 class PostLike(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.PROTECT)
-    post = models.ForeignKey(Post, on_delete=models.PROTECT, related_name='likes')
+    human = models.ForeignKey(Human, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
 
     class Meta:
         unique_together = ('human', 'post')

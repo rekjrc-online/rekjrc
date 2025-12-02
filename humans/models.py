@@ -20,22 +20,22 @@ class Human(AbstractUser, BaseModel):
         return f"{self.first_name} {self.last_name}".strip()
 
 class Invitation(BaseModel):
-    from_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='sent_invitations')
-    to_human = models.ForeignKey(Human, on_delete=models.PROTECT, null=True, blank=True, related_name='received_invitations')
+    from_human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='sent_invitations')
+    to_human = models.ForeignKey(Human, on_delete=models.CASCADE, null=True, blank=True, related_name='received_invitations')
     def __str__(self):
         return f"Invitation from {self.from_human} to {self.to_human or 'unclaimed'}"
 
 class HumanFriend(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friends')
-    friend_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_of')
+    human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friends')
+    friend_human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friend_of')
     class Meta:
         unique_together = ('human', 'friend_human')
     def __str__(self):
         return f"{self.human} ↔ {self.friend_human}"
 
 class FriendRequest(BaseModel):
-    human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_requestee')
-    friend_human = models.ForeignKey(Human, on_delete=models.PROTECT, related_name='friend_requestor')
+    human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friend_requestee')
+    friend_human = models.ForeignKey(Human, on_delete=models.CASCADE, related_name='friend_requestor')
     class Meta:
         unique_together = ('human', 'friend_human')
     def __str__(self):

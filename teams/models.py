@@ -6,12 +6,12 @@ from rekjrc.base_models import BaseModel
 class Team(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='teams'
     )
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='team'
     )
     def __str__(self):

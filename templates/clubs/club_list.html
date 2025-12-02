@@ -1,9 +1,13 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+{% block content %}
 <!-- club_list.html -->
 
-<div class="panel" style="text-align: center;"><h3>My Clubs</h3></div>
+<div class="panel" style="text-align: center;">
+  <h3>My Clubs (<a href="/profiles/build/?profiletype=club">New</a>)</h3>
+</div>
 
-{% if clubs %} {% for club in clubs %}
+{% if clubs %}
+{% for club in clubs %}
 <div class="panel bgmouse" onclick="window.location.href='/profiles/{{ club.profile.uuid }}/';">
   <table cellpadding="5" cellspacing="0">
     <tr>

@@ -9,11 +9,11 @@ from profiles.models import Profile
 class Build(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='builds')
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='builds')
     def __str__(self):
         return self.profile.displayname
@@ -44,7 +44,7 @@ class BuildAttributeEnum(BaseModel):
 
 class BuildAttribute(BaseModel):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attributes')
-    attribute_type = models.ForeignKey(BuildAttributeEnum, on_delete=models.PROTECT)
+    attribute_type = models.ForeignKey(BuildAttributeEnum, on_delete=models.CASCADE)
     value = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.attribute_type.name}: {self.value}"

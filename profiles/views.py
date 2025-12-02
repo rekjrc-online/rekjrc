@@ -171,16 +171,18 @@ class ProfileBuildView(LoginRequiredMixin, CreateView):
     template_name = 'profiles/profile_build.html'
     login_url = '/humans/login/'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profiletype'] = self.request.GET.get('profiletype', '').upper()
+        return context
+
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         profiletype_param = self.request.GET.get('profiletype', '').upper()
         allowed_types = [choice[0] for choice in Profile.PROFILE_TYPE_CHOICES]
-
         if profiletype_param in allowed_types:
-            # Hide the field and set initial value
             form.fields['profiletype'].initial = profiletype_param
             form.fields['profiletype'].widget = forms.HiddenInput()
-
         return form
 
     def form_valid(self, form):

@@ -8,15 +8,15 @@ from humans.models import Human
 class Event(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='events')
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='events')
     location = models.ForeignKey(
         Location,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='events')
     eventdate = models.DateField(default=timezone.now)
     eventtime = models.TimeField(default=timezone.now)
@@ -27,11 +27,11 @@ class Event(BaseModel):
 class EventInterest(BaseModel):
     event = models.ForeignKey(
         Event,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='interests')
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='event_interests')
     note = models.CharField(max_length=255, blank=True)  # optional note
     created_at = models.DateTimeField(auto_now_add=True)

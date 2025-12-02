@@ -10,22 +10,24 @@ from tracks.models import Track
 
 class Race(BaseModel):
     RACE_TYPE_CHOICES = [
+        ('Lap Race', 'Lap Race'),
         ('Drag Race', 'Drag Race'),
         ('Crawler Comp', 'Crawler Comp'),
-        ('Lap Race', 'Lap Race'),
 		('Out and Back', 'Out and Back'),
         ('Long Jump', 'Long Jump'),
+        ('Top Speed', 'Top Speed'),
+        ('Judged Event', 'Judged Event'),
     ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='races',
         null=True,
         blank=True)
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='race',
         default=1)
     event = models.ForeignKey(

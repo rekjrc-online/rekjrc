@@ -12,20 +12,20 @@ class TrackType(BaseModel):
 class Track(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='tracks',
         default=1)
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='track')
     track_type = models.ForeignKey(
         TrackType,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='tracks')
     location = models.ForeignKey(
         Location,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='tracks')
     def __str__(self):
         return self.profile.displayname
@@ -36,8 +36,8 @@ class TrackAttributeEnum(BaseModel):
         return self.name
 
 class TrackAttribute(BaseModel):
-    track = models.ForeignKey(Track, on_delete=models.PROTECT, related_name='attributes')
-    attribute_type = models.ForeignKey(TrackAttributeEnum, on_delete=models.PROTECT)
+    track = models.ForeignKey(Track, on_delete=models.CASCADE, related_name='attributes')
+    attribute_type = models.ForeignKey(TrackAttributeEnum, on_delete=models.CASCADE)
     value = models.CharField(max_length=255)
     def __str__(self):
         return f"{self.attribute_type.name}: {self.value}"

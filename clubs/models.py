@@ -7,14 +7,14 @@ from locations.models import Location
 class Club(BaseModel):
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='clubs',
         null=True,
         blank=True
     )
     profile = models.OneToOneField(
         Profile,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='club'   # singular, 1:1 with profile
     )
 
@@ -25,12 +25,12 @@ class Club(BaseModel):
 class ClubLocation(BaseModel):
     club = models.ForeignKey(
         Club,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='locations'  # matches subformset key in ProfileUpdateView
     )
     location = models.ForeignKey(
         Location,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='club_locations'  # meaningful name for reverse access
     )
 
@@ -41,12 +41,12 @@ class ClubLocation(BaseModel):
 class ClubMember(BaseModel):
     club = models.ForeignKey(
         Club,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='members'  # already clear
     )
     human = models.ForeignKey(
         Human,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         related_name='club_memberships'
     )
     role = models.CharField(max_length=100, blank=True)
