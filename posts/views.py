@@ -112,14 +112,6 @@ class PostReplyView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['parent_post'] = get_object_or_404(Post, uuid=self.kwargs['post_uuid'])
-        from django.db.models.fields.related import ForeignObjectRel
-        user = self.request.user
-        rels = [
-            f for f in user._meta.get_fields()
-            if isinstance(f, ForeignObjectRel)]
-        print("Reverse relations:")
-        for r in rels:
-            print("name:", r.name, "related_name:", r.related_name)
         context['profiles'] = self.request.user.human.all()        
         return context
 
