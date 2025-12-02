@@ -72,4 +72,32 @@
 </div>
 
 <br /><br /><br /><br />
+
+<script>
+function setCookie(name, value, days) {
+    const expires = new Date();
+    expires.setTime(expires.getTime() + (days*24*60*60*1000));
+    document.cookie = name + "=" + encodeURIComponent(value) + ";expires=" + expires.toUTCString() + ";path=/";
+}
+
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+        let [key, value] = cookie.trim().split('=');
+        if (key === name) return decodeURIComponent(value);
+    }
+    return null;
+}
+
+const profileSelect = document.getElementById("id_profile");
+if (profileSelect) {
+    profileSelect.addEventListener("change", function() {
+        setCookie("selectedProfile", this.value, 30);
+    });
+    const savedProfile = getCookie("selectedProfile");
+    if (savedProfile) {
+        profileSelect.value = savedProfile;
+    }
+}
+</script>
 {% endblock %}

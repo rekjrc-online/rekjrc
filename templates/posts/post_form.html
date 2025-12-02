@@ -64,7 +64,7 @@ function getCookie(name) {
     return null;
 }
 
-const profileSelect = document.getElementById("profileSelect");
+const profileSelect = document.getElementById("id_profile");
 if (profileSelect) {
     profileSelect.addEventListener("change", function() {
         setCookie("selectedProfile", this.value, 30);
