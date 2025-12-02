@@ -30,7 +30,7 @@
             {% if post.youtube_id %}
                 <p><a href="{{ post.video_url }}" target="_blank">Watch Video</a></p>
             {% endif %}
-            <div class="metrics" data-post-id="{{ post.id }}">
+            <div class="metrics" data-post-id="{{ post.uuid }}">
                 {% include "posts/post_metrics.html" %}
             </div>
         </div>

@@ -1,7 +1,7 @@
 <!-- post_metrics.html -->
-<div class="metrics" data-post-id="{{ post.id }}">
+<div class="metrics" data-post-id="{{ post.uuid }}">
     {% if user.is_authenticated %}
-        <a href="#" onclick="event.stopPropagation();" class="like-btn text-decoration-none" data-post-id="{{ post.id }}">
+        <a href="#" onclick="event.stopPropagation();" class="like-btn text-decoration-none" data-post-id="{{ post.uuid }}">
             {% if post.liked_by_user %}
                 <span class="heart">❤️</span>
             {% else %}

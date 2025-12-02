@@ -14,15 +14,29 @@ class ProfileCreateForm(forms.ModelForm):
         }
 
 class ProfileEditForm(forms.ModelForm):
+
     class Meta:
         model = Profile
-        # exclude profiletype from the edit form
         fields = ['displayname', 'bio', 'avatar', 'city', 'state', 'website']
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 3, 'class': 'full-width'}),
             'displayname': forms.TextInput(attrs={'class': 'full-width'}),
+            'bio': forms.Textarea(attrs={'rows': 3, 'class': 'full-width'}),
+            'avatar': forms.ClearableFileInput(attrs={
+                'class': 'full-width',
+                'accept': 'image/*'
+            }),
             'city': forms.TextInput(attrs={'class': 'full-width'}),
             'state': forms.TextInput(attrs={'class': 'full-width'}),
             'website': forms.URLInput(attrs={'class': 'full-width'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        profile = self.instance
+        special_types = ['CLUB', 'TEAM', 'STORE', 'LOCATION']
+        if profile.profiletype in special_types:
+            self.fields['chat_enabled'] = forms.BooleanField(
+                required=False,
+                label="Enable Chat room",
+                widget=forms.CheckboxInput(attrs={'class': 'full-width'})
+            )

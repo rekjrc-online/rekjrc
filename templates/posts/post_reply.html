@@ -16,14 +16,13 @@
       <img src="{{ parent_post.image.url }}" alt="Post image" style="max-width: 100%; height: auto" />
     {% endif %}
   </div>
-
   {% if not user.is_verified %}
     <p class="text-danger">
       Your account is not verified. You must verify your account before you can
       reply.
     </p>
     <a href="/humans/update/">Verify your account</a>
-  {% elif user.profile_set.exists %}
+  {% elif profiles.count %}
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-group">

@@ -25,6 +25,11 @@ class PostCreateView(CreateView):
         form.instance.human = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profiles'] = self.request.user.human.all()        
+        return context
+
 class PostDetail(DetailView):
     model = Post
     template_name = 'posts/post_detail.html'
@@ -107,6 +112,15 @@ class PostReplyView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['parent_post'] = get_object_or_404(Post, uuid=self.kwargs['post_uuid'])
+        from django.db.models.fields.related import ForeignObjectRel
+        user = self.request.user
+        rels = [
+            f for f in user._meta.get_fields()
+            if isinstance(f, ForeignObjectRel)]
+        print("Reverse relations:")
+        for r in rels:
+            print("name:", r.name, "related_name:", r.related_name)
+        context['profiles'] = self.request.user.human.all()        
         return context
 
 class HomepageView(ListView):
@@ -157,10 +171,10 @@ def toggle_like(request, post_id):
 
 @login_required
 @require_POST
-def toggle_like_ajax(request, post_id):
+def toggle_like_ajax(request, post_uuid):
     try:
         human = request.user
-        post = get_object_or_404(Post, uuid=post_id)
+        post = get_object_or_404(Post, uuid=post_uuid)
         like, created = PostLike.objects.get_or_create(human=human, post=post)
         if not created:
             like.delete()

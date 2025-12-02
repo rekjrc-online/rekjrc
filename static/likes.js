@@ -2,12 +2,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.like-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
-            const postId = this.dataset.postId;
+            console.log(this.dataset);
+            const post_uuid = this.dataset.postId;
             const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
             if (!csrfInput) return;
             const csrftoken = csrfInput.value;
 
-            fetch(`/posts/${postId}/like-ajax/`, {
+            fetch(`/posts/like-ajax/${post_uuid}/`, {
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': csrftoken,
@@ -16,9 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                const metricsDiv = document.querySelector(`.metrics[data-post-id="${postId}"]`);
+                const metricsDiv = document.querySelector(`.metrics[data-post-id="${post_uuid}"]`);
                 if (!metricsDiv) {
-                    console.error("Metrics div not found for post", postId);
+                    console.error("Metrics div not found for post", post_uuid);
                     return;
                 }
                 const likeCount = metricsDiv.querySelector('.like-count');

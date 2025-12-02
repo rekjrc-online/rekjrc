@@ -12,6 +12,8 @@ class ChatRoomView(LoginRequiredMixin, View):
     template_name = "chat/chat_room.html"
 
     def get(self, request, profile_uuid):
+        if request.user.is_verified==False:
+            return redirect('/')
         channel_profile = get_object_or_404(Profile, uuid=profile_uuid)
         one_hour_ago = timezone.now() - timedelta(hours=1)
         messages = ChatMessage.objects.filter(

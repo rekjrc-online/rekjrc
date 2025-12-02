@@ -17,7 +17,7 @@ class Profile(BaseModel):
         ('STORE', 'Store'),
 		('TEAM', 'Team'),
     ]
-	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="human")
 	profiletype = models.CharField(max_length=30, choices=PROFILE_TYPE_CHOICES)
 	displayname = models.CharField(max_length=50, default='')
 	bio = models.TextField(blank=True)
