@@ -159,7 +159,7 @@ class ProfileUpdateView(LoginRequiredMixin, View):
             os.makedirs(qr_dir, exist_ok=True)
             qr_filename = f"race_{profile.uuid}.png"
             full_file = os.path.join(qr_dir, qr_filename)
-            if full_file.is_file() == False:
+            if os.path.isfile(full_file) == False:
                 join_url = "https://" + request.build_absolute_uri(
                     reverse('races:race_join',kwargs={'profile_uuid': profile.uuid}))
                 print("join_url:", join_url)
