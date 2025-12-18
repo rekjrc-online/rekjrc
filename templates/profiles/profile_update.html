@@ -11,10 +11,7 @@
         {% if related_form %}
             {{ related_form.as_p }}
         {% endif %}
-        {% if profile.profiletype == "MODEL" %}
-            {% include "profiles/profile_update_attributes.html" %}
-        {% else %}
-        {% endif %}
+        {% include "profiles/profile_update_attributes.html" %}
         <center>
             <nowrap>
                 <button type="submit" class="btn-wide">Save</button><br /><br />

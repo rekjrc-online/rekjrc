@@ -125,13 +125,14 @@ class ProfileUpdateView(LoginRequiredMixin, View):
                     request.POST,
                     request.FILES,
                     instance=related_obj,
-                    queryset=getattr(related_obj, key).all() if related_obj else formset_class.model.objects.none(),
                     prefix=key
                 )
-                fs.forms = [f for f in fs.forms if f.has_changed()]
                 subformsets[key] = fs
 
-        all_valid = profile_form.is_valid() and related_form.is_valid() and all(fs.is_valid() for fs in subformsets.values())
+        all_valid = (
+            profile_form.is_valid()
+            and related_form.is_valid()
+            and all(fs.is_valid() for fs in subformsets.values()))
 
         if not all_valid:
             context = {

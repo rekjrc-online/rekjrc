@@ -26,7 +26,7 @@
           class="avatar"
         />
         {% endif %}<br />
-        <a href="{% url 'profiles:update-profile' event.uuid %}">Edit</a>
+        <a href="{% url 'profiles:update-profile' event.profile.uuid %}">Edit</a>
       </td>
       <td>
         <strong><u>{{ event.profile.displayname }}</u></strong>
