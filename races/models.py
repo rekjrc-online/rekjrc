@@ -10,13 +10,13 @@ from tracks.models import Track
 
 class Race(BaseModel):
     RACE_TYPE_CHOICES = [
-        ('Lap Race', 'Lap Race'),
-        ('Drag Race', 'Drag Race'),
-        ('Crawler Comp', 'Crawler Comp'),
-		('Out and Back', 'Out and Back'),
-        ('Long Jump', 'Long Jump'),
-        ('Top Speed', 'Top Speed'),
-        ('Judged Event', 'Judged Event'),
+        ('Lap Race',    'Lap Race'),
+        ('Drag Race',   'Drag Race'),
+        ('Crawler Comp','Crawler Comp'),
+        ('Stopwatch Race',   'Stopwatch Race'),
+        ('Long Jump',   'Long Jump'),
+        ('Top Speed',   'Top Speed'),
+        ('Judged Event','Judged Event')
     ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     human = models.ForeignKey(
@@ -232,3 +232,14 @@ class CrawlerRunLog(models.Model):
 
     def __str__(self):
         return f"{self.milliseconds}ms - {self.label} ({self.delta:+})"
+
+#class RaceCrawlerRun(models.Model):
+class RaceStopwatchRun(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='stopwatch_runs')
+    racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='stopwatch_runs')
+    elapsed_time = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        if self.elapsed_time is not None:
+            return f"{self.racedriver} - {self.elapsed_time:.2f}s"
+        return f"{self.racedriver} - No time recorded"

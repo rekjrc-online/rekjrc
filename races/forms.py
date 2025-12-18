@@ -7,11 +7,6 @@ class LapMonitorUploadForm(forms.Form):
     csv_file = forms.FileField(label="LapMonitor CSV File")
 
 class RaceForm(forms.ModelForm):
-    track = forms.ModelChoiceField(
-        queryset=Track.objects.all(),
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
     class Meta:
         model = Race
         fields = [

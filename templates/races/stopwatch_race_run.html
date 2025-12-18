@@ -1,0 +1,39 @@
+<!-- stopwatch_race_run.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online - Run {{ racedriver.driver.displayname }}</title>
+<link rel="icon" href="/static/favicon.ico">
+<link rel="stylesheet" href="/static/styles.css" />
+{% include "races/race_crawler_run_css.html" %}
+</head>
+<body>
+
+<center>
+<h2>Run: {{ racedriver.driver.displayname }}</h2>
+
+<div class="timers">
+    <div>
+        <div class="lcd-display" id="elapsedDisplay">00:00.00</div>
+        <small>Elapsed Time</small>
+    </div>
+</div>
+
+<form method="post" id="runForm" action="{% url 'races:stopwatch_race_run' profile_uuid=racedriver.driver.uuid race_uuid=race.uuid racedriver_uuid=racedriver.uuid %}">
+    {% csrf_token %}
+    <input type="hidden" id="elapsed_time" name="elapsed_time" value="{{ run.elapsed_time|default:"0" }}">
+
+    <div class="button-row">
+        <button type="button" id="startStopBtn" style="background-color: orangered; color: white;">Start</button>
+    </div>
+    <div class="button-row">
+        <button type="submit" id="submitBtn" disabled>Submit</button>
+    </div>
+</form>
+
+</center>
+{% include "races/stopwatch_race_run_js.html" %}
+</body>
+</html>

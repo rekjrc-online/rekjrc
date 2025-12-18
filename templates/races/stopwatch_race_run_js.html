@@ -1,0 +1,75 @@
+<!-- race_crawler_run_js.html -->
+<script>
+let startTime = 0;
+let elapsed = parseFloat(document.getElementById('elapsed_time').value) || 0;
+let running = false;
+let interval;
+
+const elapsedDisplay = document.getElementById('elapsedDisplay');
+
+const startStopBtn = document.getElementById('startStopBtn');
+const finishResetBtn = document.getElementById('finishResetBtn');
+const submitBtn = document.getElementById('submitBtn');
+
+const elapsedInput = document.getElementById('elapsed_time');
+
+let finished = false;
+
+function formatTime(sec) {
+    const minutes = Math.floor(sec / 60);
+    const seconds = Math.floor(sec % 60);
+    const hundredths = Math.floor((sec % 1) * 100);
+    return `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}.${String(hundredths).padStart(2,'0')}`;
+}
+
+function updateDisplays() {
+    const now = running ? (Date.now() - startTime)/1000 + elapsed : elapsed;
+    elapsedDisplay.textContent = formatTime(now);
+    elapsedInput.value = now.toFixed(2);
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1;
+        utter.pitch = 1;
+        window.speechSynthesis.speak(utter);
+    }
+}
+
+// Start/Pause
+startStopBtn.addEventListener('click', () => {
+    if (!running) {
+        running = true;
+        startTime = Date.now();
+        interval = setInterval(updateDisplays, 50);
+        startStopBtn.textContent = 'Stop';
+    } else {
+        running = false;
+        clearInterval(interval);
+        elapsed += (Date.now() - startTime) / 1000;
+        updateDisplays();
+        disableControls();
+    }
+});
+
+function speakFinalScore(elapsedSeconds, points) {
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = Math.floor(elapsedSeconds % 60);
+    const hundredths = Math.floor((elapsedSeconds % 1) * 100);
+    const hundredthsDigits = hundredths.toString().padStart(2,'0').split('').join(' ');
+    const timeStr = `Time ${minutes} minute${minutes!==1?'s':''} ` +
+                    `${seconds} second${seconds!==1?'s':''} point ${hundredthsDigits}`;
+    speak(`Finished - ${pointsStr}`);
+}
+
+function disableControls() {
+    console.log(1);
+    startStopBtn.disabled = true;
+    submitBtn.disabled = false;
+    console.log(2);
+}
+
+updateDisplays();
+</script>

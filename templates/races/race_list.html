@@ -29,18 +29,23 @@
                         {% else %}
                             <u>Profile:</u> {{ profile.displayname }}<br />
                             <u>Race Type:</u> {{ profile.race.race_type }}<br />
+
                             {% if profile.race.event %}
                                 <u>Event:</u> {{ profile.race.event }}<br />
                             {% endif %}
+
                             {% if profile.race.location %}
                                 <u>Location:</u> {{ profile.race.location }}<br />
                             {% endif %}
+
                             {% if profile.race.club %}
                                 <u>Club:</u> {{ profile.race.club }}<br />
                             {% endif %}
+
                             {% if profile.race.team %}
                                 <u>Team:</u> {{ profile.race.team }}<br />
                             {% endif %}
+
                             <u>Entries:</u> {{ profile.driver_count }}<br />
                             <br />
                         {% endif %}
@@ -58,6 +63,8 @@
                         <a href="{% url 'races:race_drag_race' profile.uuid profile.race.uuid %}">Run Out-and-Back Race</a>
                     {% elif profile.race.race_type == "Crawler Comp" %}
                         <a href="{% url 'races:race_crawler_comp' profile.uuid profile.race.uuid %}">Run Crawler Competition</a>
+                    {% elif profile.race.race_type == "Stopwatch Race" %}
+                        <a href="{% url 'races:stopwatch_race_list' profile.uuid profile.race.uuid %}">Run Stopwatch Race</a>
                     {% endif %}
                 </font>
             </center>

@@ -7,8 +7,15 @@ from .models import (
     RaceDriver,
     RaceDragRace,
     RaceCrawlerRun,
-    CrawlerRunLog
+    CrawlerRunLog,
+    RaceStopwatchRun,
 )
+
+@admin.register(RaceStopwatchRun)
+class StopwatchRunInline(admin.ModelAdmin):
+    model = RaceStopwatchRun
+    extra = 1
+    can_delete = True
 
 # Inline for CrawlerRunLog within RaceCrawlerRun
 class CrawlerRunLogInline(admin.TabularInline):
@@ -61,8 +68,7 @@ class LapMonitorResultAdmin(admin.ModelAdmin):
 
 @admin.register(Race)
 class RaceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'profile', 'human', 'event', 'race_type',
-                    'location', 'track', 'club', 'team', 'transponder', 'entry_locked', 'race_finished']
+    list_display = ['id', 'profile', 'human', 'race_type', 'event', 'location', 'track', 'club', 'team', 'transponder', 'entry_locked', 'race_finished']
     list_filter = ['event', 'race_type', 'location', 'track', 'club', 'team', 'entry_locked', 'race_finished']
     search_fields = ['profile__user__username', 'human__username', 'event__name', 'entry_locked', 'race_finished']
     autocomplete_fields = ['profile', 'human', 'event', 'location', 'track', 'club', 'team']

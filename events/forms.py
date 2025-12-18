@@ -1,4 +1,5 @@
 from django import forms
+from django.forms import inlineformset_factory
 from .models import Event, EventInterest
 
 class EventForm(forms.ModelForm):
@@ -17,3 +18,4 @@ class EventInterestForm(forms.ModelForm):
         widgets = {
             'note': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Optional note...'}),
         }
+

@@ -14,4 +14,7 @@ urlpatterns = [
     path("crawler-comp/run/<uuid:profile_uuid>/<uuid:race_uuid>/<uuid:racedriver_uuid>/", views.RaceCrawlerRunView.as_view(), name="race_crawler_run"),
     path("crawler-comp/finish/<uuid:profile_uuid>/<uuid:race_uuid>/", views.RaceCrawlerFinishView.as_view(), name="race_crawler_finish"),
     path("crawler-comp/locktoggle/<uuid:profile_uuid>/<uuid:race_uuid>/", views.RaceLockToggleView.as_view(), name="race_lock_toggle"),
+    path("stopwatch-race/<uuid:profile_uuid>/<uuid:race_uuid>/", views.StopwatchRaceListView.as_view(), name="stopwatch_race_list"),
+    path("stopwatch-race/<uuid:profile_uuid>/<uuid:race_uuid>/<uuid:racedriver_uuid>/", views.StopwatchRaceRunView.as_view(), name="stopwatch_race_run"),
+    path("stopwatch-race/<uuid:profile_uuid>/<uuid:race_uuid>/finish/", views.StopwatchRaceFinishView.as_view(), name="stopwatch_race_finish"),
 ]
