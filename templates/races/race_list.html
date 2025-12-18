@@ -65,6 +65,14 @@
                         <a href="{% url 'races:race_crawler_comp' profile.uuid profile.race.uuid %}">Run Crawler Competition</a>
                     {% elif profile.race.race_type == "Stopwatch Race" %}
                         <a href="{% url 'races:stopwatch_race_list' profile.uuid profile.race.uuid %}">Run Stopwatch Race</a>
+                    {% elif profile.race.race_type == "Long Jump" %}
+                        <a href="{% url 'races:stopwatch_race_list' profile.uuid profile.race.uuid %}">Run Long Jump</a>
+                    {% elif profile.race.race_type == "Judged Event" %}
+                        <a href="{% url 'races:stopwatch_race_list' profile.uuid profile.race.uuid %}">Run Judged Event</a>
+                    {% elif profile.race.race_type == "Top Speed" %}
+                        <a href="{% url 'races:stopwatch_race_list' profile.uuid profile.race.uuid %}">Run Top Speed Event</a>
+                    {% else %}
+                        N/A = "{{ profile.race.race_type }}"
                     {% endif %}
                 </font>
             </center>

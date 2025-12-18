@@ -10,24 +10,26 @@ from tracks.models import Track
 
 class Race(BaseModel):
     RACE_TYPE_CHOICES = [
-        ('Lap Race',    'Lap Race'),
-        ('Drag Race',   'Drag Race'),
-        ('Crawler Comp','Crawler Comp'),
-        ('Stopwatch Race',   'Stopwatch Race'),
-        ('Long Jump',   'Long Jump'),
-        ('Top Speed',   'Top Speed'),
-        ('Judged Event','Judged Event')
+        ('Lap Race',        'Lap Race'),
+        ('Drag Race',       'Drag Race'),
+        ('Crawler Comp',    'Crawler Comp'),
+        ('Stopwatch Race',  'Stopwatch Race'),
+        ('Long Jump',       'Long Jump'),
+        ('Top Speed',       'Top Speed'),
+        ('Judged Event',    'Judged Event')
     ]
     race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
     human = models.ForeignKey(
         Human,
         on_delete=models.CASCADE,
         related_name='races',
+        db_index=True,
         null=True,
         blank=True)
     profile = models.OneToOneField(
         Profile,
         on_delete=models.CASCADE,
+        db_index=True,
         related_name='race',
         default=1)
     event = models.ForeignKey(
@@ -41,24 +43,28 @@ class Race(BaseModel):
         Location,
         on_delete=models.SET_NULL,
         related_name='races',
+        db_index=True,
         null=True,
         blank=True)
     track = models.ForeignKey(
         Track,
         on_delete=models.SET_NULL,
         related_name='races',
+        db_index=True,
         null=True,
         blank=True)
     club = models.ForeignKey(
         Club,
         on_delete=models.SET_NULL,
         related_name='races',
+        db_index=True,
         null=True,
         blank=True)
     team = models.ForeignKey(
         Team,
         on_delete=models.SET_NULL,
         related_name='races',
+        db_index=True,
         null=True,
         blank=True)
     TRANSPONDER_CHOICES = [
