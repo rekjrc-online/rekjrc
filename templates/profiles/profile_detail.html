@@ -58,8 +58,8 @@
         <h1>Location Attributes</h1>
       {% elif profile.profiletype == "RACE" %}
         <h1><a href="{% url 'races:race_join' profile.uuid %}">Join Race</a></h1>
-        <a href="/media/qrcodes/race_{{ profile.id }}.png" target="_blank">
-          <img src="/media/qrcodes/race_{{ profile.id }}.png">
+        <a href="/media/qrcodes/race_{{ profile.uuid }}.png" target="_blank">
+          <img src="/media/qrcodes/race_{{ profile.uuid }}.png">
         </a>
       {% elif profile.profiletype == "TRACK" %}
         <h1>Track Attributes</h1>

@@ -15,14 +15,14 @@ class Command(BaseCommand):
         races = Profile.objects.filter(profiletype='RACE')
 
         for race in races:
-            filename = f"race_{race.id}.png"
+            filename = f"race_{race.uuid}.png"
             filepath = os.path.join(base_dir, filename)
 
             if os.path.exists(filepath):
                 self.stdout.write(self.style.WARNING(f"Exists: {filename}"))
                 continue
 
-            join_url = f"https://rekjrc.com/races/{race.id}/join/"
+            join_url = f"https://rekjrc.com/races/{race.uuid}/join/"
 
             img = qrcode.make(join_url)
             img.save(filepath)

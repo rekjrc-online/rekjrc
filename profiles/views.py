@@ -1,30 +1,30 @@
 from django import forms
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, reverse, get_object_or_404, render
-from django.views.generic import DetailView, ListView, CreateView, UpdateView, DeleteView, View
-from django.core.exceptions import ObjectDoesNotExist
-from django.forms import modelformset_factory
+from django.views.generic import DetailView, ListView, CreateView, DeleteView, View
+from django.conf import settings
 from .forms import ProfileEditForm, ProfileCreateForm
 from .models import Profile
 
 from builds.models import Build
-from clubs.models import Club
-from events.models import Event
-from locations.models import Location
-from races.models import Race
-from stores.models import Store
-from teams.models import Team
-from tracks.models import Track
-
 from builds.forms import BuildForm, BuildAttributeFormSet
+from clubs.models import Club
 from clubs.forms import ClubForm, ClubLocationFormSet
+from events.models import Event
 from events.forms import EventForm
+from locations.models import Location
 from locations.forms import LocationForm
+from races.models import Race
 from races.forms import RaceForm, RaceAttributeFormSet
+from stores.models import Store
 from stores.forms import StoreForm
+from teams.models import Team
 from teams.forms import TeamForm
+from tracks.models import Track
 from tracks.forms import TrackForm, TrackAttributeFormSet
 
+import os
+import qrcode
 import logging
 logger = logging.getLogger(__name__)
 
@@ -113,7 +113,6 @@ class ProfileUpdateView(LoginRequiredMixin, View):
         form_class = profiletype_info['form']
         subforms = profiletype_info.get('subforms', {})
 
-        # Ensure human is set when creating related object
         related_obj, created = model_class.objects.get_or_create(profile=profile, defaults={'human': request.user})
         related_form = form_class(request.POST, request.FILES, instance=related_obj)
 
@@ -154,6 +153,25 @@ class ProfileUpdateView(LoginRequiredMixin, View):
         for key, fs in subformsets.items():
             fs.instance = related_obj
             fs.save()
+
+        if profile.profiletype.lower() == 'race':
+            qr_dir = os.path.join(settings.MEDIA_ROOT, "qrcodes")
+            os.makedirs(qr_dir, exist_ok=True)
+            qr_filename = f"race_{profile.uuid}.png"
+            full_file = os.path.join(qr_dir, qr_filename)
+            if full_file.is_file() == False:
+                join_url = "https://" + request.build_absolute_uri(
+                    reverse('races:race_join',kwargs={'profile_uuid': profile.uuid}))
+                print("join_url:", join_url)
+                qr = qrcode.QRCode(
+                    version=1,
+                    error_correction=qrcode.constants.ERROR_CORRECT_H,
+                    box_size=8,
+                    border=4)
+                qr.add_data(join_url)
+                qr.make(fit=True)
+                img = qr.make_image(fill_color="black", back_color="white")
+                img.save(full_file)
 
         return redirect('profiles:detail-profile', profile_uuid=profile.uuid)
 
