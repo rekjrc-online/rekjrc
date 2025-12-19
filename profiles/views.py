@@ -162,7 +162,6 @@ class ProfileUpdateView(LoginRequiredMixin, View):
             if os.path.isfile(full_file) == False:
                 join_url = "https://" + request.build_absolute_uri(
                     reverse('races:race_join',kwargs={'profile_uuid': profile.uuid}))
-                print("join_url:", join_url)
                 qr = qrcode.QRCode(
                     version=1,
                     error_correction=qrcode.constants.ERROR_CORRECT_H,
