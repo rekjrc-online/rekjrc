@@ -10,6 +10,7 @@ from datetime import timedelta
 
 class ChatRoomView(LoginRequiredMixin, View):
     template_name = "chat/chat_room.html"
+    login_url = '/humans/login/'
 
     def get(self, request, profile_uuid):
         if request.user.is_verified==False:

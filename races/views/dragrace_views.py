@@ -13,11 +13,14 @@ class RaceDragRaceView(LoginRequiredMixin, View):
     def get(self, request, profile_uuid, race_uuid):
         race = get_object_or_404(Race, uuid=race_uuid)
         if race.race_finished==True:
+            print(1)
             return redirect("profiles:detail-profile", profile_uuid=profile_uuid)
 
         if race.human != request.user:
+            print(2)
             return redirect("profiles:detail-profile", profile_uuid=profile_uuid)
 
+        print(3)
         drag_rounds = RaceDragRace.objects.filter(race=race).order_by("round_number", "id")
 
         # ---------------------------------------------------
