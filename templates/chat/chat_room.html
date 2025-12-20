@@ -196,10 +196,10 @@ html, body {
 
 <form method="post" class="input-area">
 {% csrf_token %}
-<input id="chatInput" name="content" type="text" placeholder="Type a message…" autocomplete="off">
+<input id="chatInput" name="content" type="text" placeholder="Type a message…" required autocomplete="off">
 <div class="controls">
     {% if profiles.exists %}
-        <select id="profileSelect" name="profile_uuid">
+        <select id="profileSelect" name="profile_uuid" required>
             <option value="" disabled hidden>Choose Profile</option>
             {% for p in profiles %}
                 <option value="{{ p.uuid }}">{{ p.displayname }}</option>
