@@ -19,12 +19,12 @@ class Profile(BaseModel):
     ]
 	human = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="human")
 	profiletype = models.CharField(max_length=30, choices=PROFILE_TYPE_CHOICES)
-	displayname = models.CharField(max_length=50, default='')
-	bio = models.TextField(blank=True)
+	displayname = models.CharField(max_length=50, default='', help_text='Required')
+	bio = models.TextField(blank=True, help_text='Optional')
 	avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-	city = models.CharField(max_length=100, blank=True)
-	state = models.CharField(max_length=100, blank=True)
-	website = models.URLField(blank=True)
+	city = models.CharField(max_length=100, blank=True, help_text='Optional')
+	state = models.CharField(max_length=100, blank=True, help_text='Optional')
+	website = models.URLField(blank=True, help_text='Optional')
 	chat_enabled = models.BooleanField(default=False)
 
 	def __str__(self):
@@ -32,7 +32,7 @@ class Profile(BaseModel):
 
 	def save(self, *args, **kwargs):
 		try:
-			super().save(*args, **kwargs)  # Save first to ensure the image file exists
+			super().save(*args, **kwargs)
 			if self.avatar:
 				img_path = self.avatar.path
 				img = Image.open(img_path)
@@ -44,7 +44,7 @@ class Profile(BaseModel):
 
 	@property
 	def follower_count(self):
-		from profiles.models import ProfileFollows  # import inside to avoid circular import
+		from profiles.models import ProfileFollows
 		return ProfileFollows.objects.filter(profile=self).count()
 
 class ProfileFollows(BaseModel):

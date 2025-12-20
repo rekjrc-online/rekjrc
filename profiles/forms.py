@@ -1,6 +1,16 @@
 from django import forms
 from .models import Profile
 
+RACE_TYPE_CHOICES = [
+    ('Lap Race',        'Lap Race'),
+    ('Drag Race',       'Drag Race'),
+    ('Crawler Comp',    'Crawler Comp'),
+    ('Stopwatch Race',  'Stopwatch Race'),
+    ('Long Jump',       'Long Jump'),
+    ('Top Speed',       'Top Speed'),
+    ('Judged Event',    'Judged Event')
+]
+
 class ProfileCreateForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -12,6 +22,18 @@ class ProfileCreateForm(forms.ModelForm):
             'state': forms.TextInput(attrs={'class': 'full-width'}),
             'website': forms.URLInput(attrs={'class': 'full-width'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        profile = self.instance
+        if profile.profiletype == "race":
+            print("hi")
+            self.fields['race_type'] = forms.ChoiceField(
+                choices=RACE_TYPE_CHOICES,
+                required=True,
+                label="Race Type",
+                widget=forms.Select(attrs={'class': 'full-width'})
+            )
 
 class ProfileEditForm(forms.ModelForm):
 

@@ -1,0 +1,136 @@
+<!-- longjump_race_run.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online - Run {{ racedriver.driver.displayname }}</title>
+
+<link rel="stylesheet" href="/static/styles.css" />
+{% include "races/race_crawler_run_css.html" %}
+
+<style>
+    .submit-btn { max-width: 220px; width: 100%; }
+    .keypad button { width: 70px; height: 50px; font-size: 1.5rem; }
+</style>
+</head>
+
+<body>
+<center>
+
+<h2>
+    Long Jump Run<br />
+    {{ racedriver.driver.displayname }}<br />
+    {{ racedriver.model.displayname }}
+</h2>
+
+<div class="timers">
+    <div>
+        <div class="lcd-display" id="jumpDisplay">0' 0"</div>
+        <small>Distance</small>
+    </div>
+</div>
+
+<form action="{% url 'races:longjump_race_run' profile_uuid=racedriver.driver.uuid race_uuid=race.uuid racedriver_uuid=racedriver.uuid %}" method="post" id="runForm">
+
+    {% csrf_token %}
+    <input type="hidden" id="feet" name="feet">
+    <input type="hidden" id="inches" name="inches">
+
+    <!-- Keypad -->
+    <div class="keypad">
+
+        <div class="button-row">
+            <button type="button" onclick="press('7')">7</button>
+            <button type="button" onclick="press('8')">8</button>
+            <button type="button" onclick="press('9')">9</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('4')">4</button>
+            <button type="button" onclick="press('5')">5</button>
+            <button type="button" onclick="press('6')">6</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('1')">1</button>
+            <button type="button" onclick="press('2')">2</button>
+            <button type="button" onclick="press('3')">3</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('.')">.</button>
+            <button type="button" onclick="press('0')">0</button>
+            <button type="button" onclick="backspace()">⌫</button>
+        </div>
+    </div>
+
+    <div class="button-row">
+        <button type="submit" id="submitBtn" class="submit-btn" disabled>
+            Submit
+        </button>
+    </div>
+
+</form>
+
+</center>
+
+<script>
+let feetBuffer = "";      // digits for feet
+let inchesBuffer = "";    // digits for inches
+let inputPhase = "feet";  // "feet" or "inches"
+
+const display = document.getElementById("jumpDisplay");
+const feetInput = document.getElementById("feet");
+const inchesInput = document.getElementById("inches");
+const submitBtn = document.getElementById("submitBtn");
+
+function updateDisplay() {
+    const feet = parseInt(feetBuffer || "0", 10);
+    const inches = parseInt(inchesBuffer || "0", 10);
+    display.textContent = `${feet}' ${inches}"`;
+    feetInput.value = feet;
+    inchesInput.value = inches;
+    submitBtn.disabled = (feet === 0 && inches === 0);}
+
+function press(char) {
+    if (char === ".") {
+        // switch to inches input
+        inputPhase = "inches";
+        return;
+    }
+
+    if (!/^\d$/.test(char)) return; // only allow digits
+
+    if (inputPhase === "feet") {
+        if (feetBuffer.length >= 3) return; // max 999 feet
+        feetBuffer += char;
+    } else {
+        if (inchesBuffer.length >= 2) return; // max 11 inches
+        const newInches = parseInt(inchesBuffer + char, 10);
+        if (newInches > 11) return; // block invalid inches
+        inchesBuffer += char;
+    }
+
+    updateDisplay();
+}
+
+function backspace() {
+    if (inputPhase === "inches" && inchesBuffer.length > 0) {
+        inchesBuffer = inchesBuffer.slice(0, -1);
+    } else if (inputPhase === "inches" && inchesBuffer.length === 0) {
+        // if inches empty, backspace goes back to feet
+        inputPhase = "feet";
+        feetBuffer = feetBuffer.slice(0, -1);
+    } else if (inputPhase === "feet") {
+        feetBuffer = feetBuffer.slice(0, -1);
+    }
+
+    updateDisplay();
+}
+
+updateDisplay();
+</script>
+
+</body>
+</html>

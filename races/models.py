@@ -7,6 +7,7 @@ from locations.models import Location
 from profiles.models import Profile
 from teams.models import Team
 from tracks.models import Track
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Race(BaseModel):
     RACE_TYPE_CHOICES = [
@@ -158,7 +159,7 @@ class RaceDriver(BaseModel):
     def __str__(self):
         driver_name = self.driver.displayname if self.driver else '-driver-'
         model_name = self.model.displayname if self.model else '-model-'
-        return f"Driver: {driver_name} | Model: {model_name}"
+        return f"Driver: {driver_name} - Model: {model_name}"
 
 class RaceDragRace(BaseModel):
     round_number = models.PositiveSmallIntegerField()
@@ -239,7 +240,6 @@ class CrawlerRunLog(models.Model):
     def __str__(self):
         return f"{self.milliseconds}ms - {self.label} ({self.delta:+})"
 
-#class RaceCrawlerRun(models.Model):
 class RaceStopwatchRun(models.Model):
     race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='stopwatch_runs')
     racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='stopwatch_runs')
@@ -249,3 +249,28 @@ class RaceStopwatchRun(models.Model):
         if self.elapsed_time is not None:
             return f"{self.racedriver} - {self.elapsed_time:.2f}s"
         return f"{self.racedriver} - No time recorded"
+
+class LongJumpRun(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='longjump_runs')
+    racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='longjump_runs')
+    feet = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0),MaxValueValidator(999),])
+    inches = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0),MaxValueValidator(11),])
+
+    @property
+    def total_inches(self):
+        return self.feet * 12 + self.inches
+
+    def __str__(self):
+        if self.total_inches is not None:
+            return f"{self.racedriver} - {self.feet}ft {self.inches}in"
+        return f"{self.racedriver} - No distance recorded"
+
+class TopSpeedRun(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE, related_name='topspeed_runs')
+    racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE, related_name='topspeed_runs')
+    topspeed = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        if self.topspeed is not None:
+            return f"{self.racedriver} - {self.topspeed}mph"
+        return f"{self.racedriver} - No top speed recorded"

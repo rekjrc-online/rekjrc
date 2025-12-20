@@ -1,0 +1,115 @@
+<!-- topspeed_race_run.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RekjRC Online - Run {{ racedriver.driver.displayname }}</title>
+
+<link rel="stylesheet" href="/static/styles.css" />
+{% include "races/race_crawler_run_css.html" %}
+<style>
+    .submit-btn {max-width: 220px;width: 100%;}
+    .keypad button {width: 70px;height: 50px;font-size: 1.5rem;}
+    .keypad-spacer {height: 24px;}
+</style>
+</head>
+
+<body>
+<center>
+
+<h2>
+    Top Speed Run<br />
+    {{ racedriver.driver.displayname }}<br />
+    {{ racedriver.model.displayname }}
+</h2>
+
+<div class="timers">
+    <div>
+        <div class="lcd-display" id="elapsedDisplay">0</div>
+        <small>Top Speed (mph)</small>
+    </div>
+</div>
+
+<form action="{% url 'races:topspeed_race_run' profile_uuid=racedriver.driver.uuid race_uuid=race.uuid racedriver_uuid=racedriver.uuid %}" method="post" id="runForm">
+
+    {% csrf_token %}
+    <input type="hidden" id="topspeed" name="topspeed">
+
+    <!-- Keypad -->
+    <div class="keypad">
+
+        <div class="button-row">
+            <button type="button" onclick="press('7')">7</button>
+            <button type="button" onclick="press('8')">8</button>
+            <button type="button" onclick="press('9')">9</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('4')">4</button>
+            <button type="button" onclick="press('5')">5</button>
+            <button type="button" onclick="press('6')">6</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('1')">1</button>
+            <button type="button" onclick="press('2')">2</button>
+            <button type="button" onclick="press('3')">3</button>
+        </div>
+
+        <div class="button-row">
+            <button type="button" onclick="press('0')">0</button>
+            <button type="button" onclick="backspace()">⌫</button>
+        </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="button-row">
+        <button type="submit" id="submitBtn" class="submit-btn" disabled>
+            Submit
+        </button>
+    </div>
+
+</form>
+
+</center>
+
+<script>
+let value = "";
+
+const display = document.getElementById("elapsedDisplay");
+const hidden = document.getElementById("topspeed");
+const submitBtn = document.getElementById("submitBtn");
+
+function updateDisplay() {
+    display.textContent = value || "0.00";
+}
+
+function isValid(v) {
+    return /^(\d{0,3})(\.\d{0,2})?$/.test(v) &&
+           (v === "" || parseFloat(v) <= 999.99);
+}
+
+function press(char) {
+    const next = value + char;
+    if (!isValid(next)) return;
+
+    // Prevent multiple decimals
+    if (char === "." && value.includes(".")) return;
+
+    value = next;
+    hidden.value = value;
+    submitBtn.disabled = value === "" || value === ".";
+    updateDisplay();
+}
+
+function backspace() {
+    value = value.slice(0, -1);
+    hidden.value = value;
+    submitBtn.disabled = value === "" || value === ".";
+    updateDisplay();
+}
+</script>
+
+</body>
+</html>
