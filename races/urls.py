@@ -23,4 +23,8 @@ urlpatterns = [
     path("topspeed-race/<uuid:profile_uuid>/<uuid:race_uuid>/", views.TopSpeedRaceListView.as_view(), name="topspeed_race_list"),
     path("topspeed-race/<uuid:profile_uuid>/<uuid:race_uuid>/<uuid:racedriver_uuid>/", views.TopSpeedRaceRunView.as_view(), name="topspeed_race_run"),
     path("topspeed-race/<uuid:profile_uuid>/<uuid:race_uuid>/finish/", views.TopSpeedRaceFinishView.as_view(), name="topspeed_race_finish"),
+    path("judged-event/<uuid:profile_uuid>/<uuid:race_uuid>/judge/", views.JudgeJoinRaceView.as_view(), name="judged_event_judge"),
+    path("judged-event/<uuid:profile_uuid>/<uuid:race_uuid>/", views.JudgedRaceListView.as_view(), name="judged_event_list"),
+    path("judged-event/<uuid:profile_uuid>/<uuid:race_uuid>/<uuid:racedriver_uuid>/", views.JudgedRaceRunView.as_view(), name="judged_event_run"),
+    path("judged-event/<uuid:profile_uuid>/<uuid:race_uuid>/finish/", views.JudgedRaceFinishView.as_view(), name="judged_event_finish"),
 ]

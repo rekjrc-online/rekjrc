@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import models
 from .models import (
     Race,
     RaceAttributeEnum,
@@ -9,6 +10,9 @@ from .models import (
     RaceCrawlerRun,
     CrawlerRunLog,
     RaceStopwatchRun,
+    JudgedEventJudge,
+    JudgedEventRun,
+    JudgedEventRunScore
 )
 
 @admin.register(RaceStopwatchRun)
@@ -153,3 +157,34 @@ class CrawlerRunLogAdmin(admin.ModelAdmin):
     
     ordering = ('run', 'milliseconds')
     autocomplete_fields = ['run', 'human', 'driver', 'model']
+
+# Inline for JudgedEventRunScore to show scores in JudgedEventRun admin
+class JudgedEventRunScoreInline(admin.TabularInline):
+    model = JudgedEventRunScore
+    extra = 1  # How many empty forms to display
+    readonly_fields = ('judge',)  # Make judge read-only if you prefer
+    fields = ('judge', 'score')
+
+@admin.register(JudgedEventRun)
+class JudgedEventRunAdmin(admin.ModelAdmin):
+    list_display = ('racedriver', 'race', 'average_score')
+    list_filter = ('race',)
+    search_fields = ('racedriver__driver__first_name', 'racedriver__driver__last_name')
+    inlines = [JudgedEventRunScoreInline]
+
+    def average_score(self, obj):
+        agg = obj.scores.aggregate(models.Avg('score'))
+        avg = agg['score__avg']
+        return f"{avg:.1f}" if avg is not None else "No score"
+    average_score.short_description = "Average Score"
+
+@admin.register(JudgedEventRunScore)
+class JudgedEventRunScoreAdmin(admin.ModelAdmin):
+    list_display = ('run', 'judge', 'score')
+    search_fields = ('run__racedriver__driver__first_name', 'run__racedriver__driver__last_name', 'judge__human__first_name', 'judge__human__last_name')
+
+@admin.register(JudgedEventJudge)
+class JudgedEventJudgeAdmin(admin.ModelAdmin):
+    list_display = ('human', 'race')
+    list_filter = ('race',)
+    search_fields = ('human__first_name', 'human__last_name')

@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from rekjrc.base_models import BaseModel
 from clubs.models import Club
@@ -19,7 +20,10 @@ class Race(BaseModel):
         ('Top Speed',       'Top Speed'),
         ('Judged Event',    'Judged Event')
     ]
-    race_type = models.CharField(max_length=30, choices=RACE_TYPE_CHOICES, default='')
+    race_type = models.CharField(
+        max_length=30,
+        choices=RACE_TYPE_CHOICES,
+        default='')
     human = models.ForeignKey(
         Human,
         on_delete=models.CASCADE,
@@ -125,8 +129,7 @@ class LapMonitorResult(BaseModel):
         indexes = [
             models.Index(fields=["session_id"]),
             models.Index(fields=["driver_id"]),
-            models.Index(fields=["race", "session_id", "driver_id", "lap_index"]),
-        ]
+            models.Index(fields=["race", "session_id", "driver_id", "lap_index"])]
     def __str__(self):
         return f"{self.session_name} - {self.driver_name} (Lap {self.lap_index})"
 
@@ -274,3 +277,41 @@ class TopSpeedRun(models.Model):
         if self.topspeed is not None:
             return f"{self.racedriver} - {self.topspeed}mph"
         return f"{self.racedriver} - No top speed recorded"
+
+class JudgedEventRun(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE)
+    racedriver = models.ForeignKey('RaceDriver', on_delete=models.CASCADE)
+
+    class Meta: constraints = [models.UniqueConstraint(fields=['race', 'racedriver'], name='unique_race_racedriver')]
+
+    def __str__(self):
+        if self.scores.exists():
+            avg_score = self.scores.aggregate(models.Avg('score'))['score__avg']
+            return f"{self.racedriver} - {avg_score:.1f}"
+        else:
+            return f"{self.racedriver} - No score recorded"
+
+class JudgedEventRunScore(models.Model):
+    run = models.ForeignKey('JudgedEventRun', on_delete=models.CASCADE, related_name='scores')
+    judge = models.ForeignKey('humans.Human', on_delete=models.CASCADE, related_name='race_judge_scores')
+    score = models.FloatField()
+
+    class Meta: constraints = [models.UniqueConstraint(fields=['run', 'judge'], name='unique_judge_per_run_score')]
+
+    def __str__(self):
+        return f"{self.run.racedriver} - {self.judge.human} - {self.score:.1f}"
+
+class JudgedEventJudge(models.Model):
+    race = models.ForeignKey('Race', on_delete=models.CASCADE)
+    human = models.ForeignKey('humans.Human', on_delete=models.CASCADE, related_name='race_judges')
+
+    class Meta: constraints = [models.UniqueConstraint(fields=['race', 'human'], name='unique_judge_per_race')]
+
+    def clean(self):
+        if self.race_id:
+            count = JudgedEventJudge.objects.filter(race=self.race).exclude(pk=self.pk).count()
+            if count >= 3:
+                raise ValidationError("A race can have at most 3 judges.")
+
+    def __str__(self):
+        return self.human.first_name + " " + self.human.last_name

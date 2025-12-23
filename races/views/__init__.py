@@ -5,3 +5,4 @@ from .lapmonitor import *
 from .dragrace_views import *
 from .longjump_views import *
 from .topspeed_views import *
+from .judged_views import *

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+{% load race_filters %}
+<!-- judged_join_race.html -->
+
+<div class="panel">
+
+<center>
+
+    <h3>{{ profile.displayname }}</h3>
+
+    {% if ijudges %}
+        <div style="padding-left:20px; padding-right: 20px;">
+            You are a judge on this race
+        </div><br />
+        <form method="post" action="{% url 'races:judged_event_list' profile_uuid=race.profile.uuid race_uuid=race.uuid %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                View Race Status
+            </button>
+        </form><br />
+    {% else %}
+        <div style="padding-left:20px; padding-right: 20px;">
+            Join this race as a judge?<br />You will not be able to participate in the race
+        </div><br />
+        <form method="post" action="{% url 'races:judged_event_judge' profile_uuid=race.profile.uuid race_uuid=race.uuid %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                Join as Judge
+            </button>
+        </form><br />
+    {% endif %}
+
+</center>
+
+</div>
+
+{% endblock %}
